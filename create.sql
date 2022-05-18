@@ -16,10 +16,10 @@ CREATE TABLE institution (
   ins_id SMALLINT UNSIGNED NOT NULL AUTO_INCREMENT,
   abbreviation VARCHAR(10) NOT NULL,
   name VARCHAR(45) NOT NULL,
-  street_name VARCHAR(45) NULL,
-  street_number SMALLINT UNSIGNED NULL,
-  zip SMALLINT UNSIGNED NULL,
-  city VARCHAR(45) NULL,
+  street_name VARCHAR(45) NOT NULL,
+  street_number SMALLINT UNSIGNED NOT NULL,
+  zip SMALLINT UNSIGNED NOT NULL,
+  city VARCHAR(45) NOT NULL,
   PRIMARY KEY (ins_id)
 )ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -72,7 +72,7 @@ CREATE TABLE company (
 CREATE TABLE program (
   prog_id SMALLINT UNSIGNED NOT NULL AUTO_INCREMENT,
   name VARCHAR(45) NOT NULL,
-  department VARCHAR(45) NULL,
+  department VARCHAR(45) NOT NULL,
   PRIMARY KEY (prog_id)
 )ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -96,7 +96,7 @@ CREATE TABLE researcher (
   last_name VARCHAR(45) NOT NULL,
   sex ENUM('M','F','O') NULL, /* 'O' stands for other */
   date_of_birth DATE NULL,
-  res_ins DATE NULL,
+  res_ins DATE NOT NULL,
   PRIMARY KEY (res_id),
   CONSTRAINT fk_res_ins FOREIGN KEY (ins_id)
     REFERENCES institution (ins_id) ON DELETE RESTRICT ON UPDATE CASCADE
@@ -144,24 +144,25 @@ CREATE TABLE deliverable (
   proj_id SMALLINT UNSIGNED NOT NULL,
   title VARCHAR(45) NOT NULL,
   description VARCHAR(450) NOT NULL,
-  date DATE NULL,
+  date DATE NOT NULL,
   PRIMARY KEY (proj_id, title, description),
   CONSTRAINT fk_del_proj FOREIGN KEY (proj_id)
     REFERENCES project (proj_id) ON DELETE RESTRICT ON UPDATE CASCADE
 )ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 CREATE TABLE research_field (
-  field_name VARCHAR(45) NOT NULL, /* should we use an ID instead? */
-  description VARCHAR(450) NOT NULL,
-  PRIMARY KEY (field_name)
+  field_id SMALLINT UNSIGNED NOT NULL AUTO_INCREMENT,
+  field_name VARCHAR(45) NOT NULL,
+  description VARCHAR(450) NULL,
+  PRIMARY KEY (field_id)
 )ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 CREATE TABLE proj_field (
   proj_id SMALLINT UNSIGNED NOT NULL,
-  field_name VARCHAR(45) NOT NULL,
-  PRIMARY KEY (proj_id, field_name),
+  field_id SMALLINT UNSIGNED NOT NULL,
+  PRIMARY KEY (proj_id, field_id),
   CONSTRAINT fk_field_proj FOREIGN KEY (proj_id)
     REFERENCES project (proj_id) ON DELETE RESTRICT ON UPDATE CASCADE,
-  CONSTRAINT fk_proj_field FOREIGN KEY (field_name)
-    REFERENCES research_field (field_name) ON DELETE RESTRICT ON UPDATE CASCADE
+  CONSTRAINT fk_proj_field FOREIGN KEY (field_id)
+    REFERENCES research_field (field_id) ON DELETE RESTRICT ON UPDATE CASCADE
 )ENGINE=InnoDB DEFAULT CHARSET=utf8;
