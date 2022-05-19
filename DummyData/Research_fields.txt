@@ -1,0 +1,14 @@
+3 12
+research_field	field_id	field_name	description
+1	99001	Archaeology	Archaeology is the scientific study of human activity through the recovery and analysis of material culture.
+2	99002	Economics	Economics is the social science that studies the production, distribution, and consumption of goods and services.
+3	99003	Biology	Biology is the scientific study of life.
+4	99004	Chemistry	Chemistry is the scientific study of the properties and behavior of matter.
+5	99005	Earth sciences	Earth science or geoscience includes all fields of natural science related to the planet Earth
+6	99006	Physics	Physics is the natural science that studies matter, its fundamental constituents, its motion and behavior through space and time, and the related entities of energy and force.
+7	99007	Astronomy	Astronomy is a natural science that studies celestial objects and phenomena.
+8	99008	Pure mathematics	Pure mathematics is the study of mathematical concepts independently of any application outside mathematics.
+9	99009	Applied mathematics	Applied mathematics is the application of mathematical methods by different fields such as physics, engineering, medicine, biology, finance, business, computer science, and industry.
+10	99010	Business	Business is the activity of making one's living or making money by producing or buying and selling products (such as goods and services).
+11	99011	Architecture 	Architecture  is both the process and the product of planning, designing, and constructing buildings or other structures.
+12	99012	Engineering 	Engineering is the use of scientific principles to design and build machines, structures, and other items, including bridges, tunnels, roads, vehicles, and buildings.

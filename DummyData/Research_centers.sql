@@ -1,0 +1,10 @@
+INSERT INTO research_center (ins_id, Public_funds, Private_funds) VALUES (78011, 5000000, 3000000);
+INSERT INTO research_center (ins_id, Public_funds, Private_funds) VALUES (78012, 2000000, 1500000);
+INSERT INTO research_center (ins_id, Public_funds, Private_funds) VALUES (78013, 4000000, 1000000);
+INSERT INTO research_center (ins_id, Public_funds, Private_funds) VALUES (78014, 2500000, 2000000);
+INSERT INTO research_center (ins_id, Public_funds, Private_funds) VALUES (78015, 1900000, 1300000);
+INSERT INTO research_center (ins_id, Public_funds, Private_funds) VALUES (78016, 1000000, 900000);
+INSERT INTO research_center (ins_id, Public_funds, Private_funds) VALUES (78017, 5000000, 3000000);
+INSERT INTO research_center (ins_id, Public_funds, Private_funds) VALUES (78018, 2400000, 1000000);
+INSERT INTO research_center (ins_id, Public_funds, Private_funds) VALUES (78019, 2000000, 1700000);
+INSERT INTO research_center (ins_id, Public_funds, Private_funds) VALUES (78020, 500000, 300000);

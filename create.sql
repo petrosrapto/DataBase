@@ -15,10 +15,10 @@ USE HFRI;
 CREATE TABLE institution (
   ins_id INT UNSIGNED NOT NULL AUTO_INCREMENT,
   abbreviation VARCHAR(10) NOT NULL,
-  name VARCHAR(45) NOT NULL,
+  name VARCHAR(100) NOT NULL,
   street_name VARCHAR(45) NOT NULL,
   street_number SMALLINT UNSIGNED NOT NULL,
-  zip SMALLINT UNSIGNED NOT NULL,
+  zip INT UNSIGNED NOT NULL,
   city VARCHAR(45) NOT NULL,
   PRIMARY KEY (ins_id)
 )ENGINE=InnoDB DEFAULT CHARSET=utf8;
@@ -38,8 +38,8 @@ engine in MySQL
 
 CREATE TABLE ins_phone (
   ins_id INT UNSIGNED NOT NULL,
-  phone VARCHAR(20) NOT NULL,     /* not null cause its primary key */
-  PRIMARY KEY (ins_id, phone),
+  phone_number VARCHAR(20) NOT NULL,     /* not null cause its primary key */
+  PRIMARY KEY (ins_id, phone_number),
   CONSTRAINT fk_phone_ins FOREIGN KEY (ins_id)
     REFERENCES institution (ins_id) ON DELETE RESTRICT ON UPDATE CASCADE
 )ENGINE=InnoDB DEFAULT CHARSET=utf8;
@@ -96,7 +96,7 @@ CREATE TABLE researcher (
   last_name VARCHAR(45) NOT NULL,
   sex ENUM('M','F','O') NULL, /* 'O' stands for other */
   date_of_birth DATE NULL,
-  res_ins DATE NOT NULL,
+  res_ins_date DATE NOT NULL,
   PRIMARY KEY (res_id),
   CONSTRAINT fk_res_ins FOREIGN KEY (ins_id)
     REFERENCES institution (ins_id) ON DELETE RESTRICT ON UPDATE CASCADE
