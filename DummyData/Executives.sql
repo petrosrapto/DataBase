@@ -1,6 +1,6 @@
 INSERT INTO executive (ex_id, name) VALUES (11001, "Sweet");
 INSERT INTO executive (ex_id, name) VALUES (11002, "Vang");
-INSERT INTO executive (ex_id, name) VALUES ("11003", "lowers");
+INSERT INTO executive (ex_id, name) VALUES (11003, "lowers");
 INSERT INTO executive (ex_id, name) VALUES (11004, "Brookes");
 INSERT INTO executive (ex_id, name) VALUES (11005, "Brewer");
 INSERT INTO executive (ex_id, name) VALUES (11006, "Coates");
