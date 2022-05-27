@@ -26,5 +26,5 @@ UNION
  INNER JOIN project p
  ON pf.proj_id = p.proj_id  
  INNER JOIN researcher r 
- ON p.sup_res_id = r.res_id 
+ ON p.ass_res_id = r.res_id 
  WHERE rf.field_name = 'Engineering' AND (p.start <= current_date() AND p.end >= DATE_SUB(current_date(), INTERVAL 1 YEAR)) )
