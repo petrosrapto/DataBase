@@ -1,0 +1,42 @@
+{% extends "global_layout.html" %}
+{% block content %}
+<div class="container">
+    {% include "flash_messages.html" %}
+    <div class="row" id="row">
+        <div class="col-md-12">
+            <div class="card" id="card-container">
+                <div class="card-body" id="card">
+                {% if projects_per_researcher|length == 0 %}
+                    <!-- |length is a jinja2 filter that returns the amount of items in a sequence -->
+                    <h1 style="margin-top: 5rem;">No researchers found!</h1>
+                {% else %}
+                    <div class="table-responsive">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>First Name</th>
+                                    <th>Last Name</th>
+                                    <th>Total Projects</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for pr in projects_per_researcher %}
+                                    <tr>
+                                        <td> {{ pr.res_id }} </td>
+                                        <td> {{ pr.first_name }} </td>
+                                        <td> {{ pr.last_name }} </td>
+                                        <td> {{ pr.total_projects }} </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}

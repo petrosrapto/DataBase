@@ -113,38 +113,23 @@ def deleteProgram(programID):
         flash(str(e), "danger")
     return redirect(url_for("getPrograms"))
 
-@app.route("/grades")
-def getGrades():
+# Fetch view projects_per_researcher (not updatable)
+@app.route("/projects_per_researcher")
+def getprojects_per_researcher():
     """
-    Retrieve grades from database
+    Retrieve view projects_per_researcher from database
     """
     try:
         cur = db.connection.cursor()
-        cur.execute("SELECT * FROM grades")
+        cur.execute("SELECT * FROM projects_per_researcher;")
         column_names = [i[0] for i in cur.description]
-        grades = [dict(zip(column_names, entry)) for entry in cur.fetchall()]
+        projects_per_researcher = [dict(zip(column_names, entry)) for entry in cur.fetchall()]
         cur.close()
-        return render_template("grades.html", grades = grades, pageTitle = "Grades Page")
+        return render_template("projects_per_researcher.html", projects_per_researcher = projects_per_researcher, pageTitle = " Projects per researcher")
     except Exception as e:
         abort(500)
         print(e)
-
-@app.route("/grades/delete/<int:gradeID>", methods = ["POST"])
-def deleteGrade(gradeID):
-    """
-    Delete grade by id from database
-    """
-    query = f"DELETE FROM grades WHERE id = {gradeID};"
-    try:
-        cur = db.connection.cursor()
-        cur.execute(query)
-        db.connection.commit()
-        cur.close()
-        flash("Grade deleted successfully", "primary")
-    except Exception as e:
-        flash(str(e), "danger")
-    return redirect(url_for("getGrades"))
-
+        
 @app.errorhandler(404)
 def page_not_found(e):
     # note that we set the 404 status explicitly
