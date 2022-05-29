@@ -10,7 +10,7 @@ SET FOREIGN_KEY_CHECKS=0;
 /* Do not check foreign key constraints */
 
 
-/*--------------------------------------------------------------------------------*/
+/*********************************************************************************/
 
 /*
   START OF TABLES
@@ -122,6 +122,8 @@ CREATE TABLE researcher (
     REFERENCES institution (ins_id) ON DELETE RESTRICT ON UPDATE CASCADE
 )ENGINE=InnoDB AUTO_INCREMENT=310001 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
+
+
 DELIMITER $$
 
 DROP FUNCTION IF EXISTS duration$$
@@ -129,7 +131,7 @@ CREATE FUNCTION duration(start date, end date)
   RETURNS INT
   DETERMINISTIC
   BEGIN
-    RETURN round(datediff(end, start)/365.25);
+    RETURN round(datediff(end, start)/365.0);
   END$$
 
 DELIMITER ;
@@ -216,7 +218,7 @@ CREATE TABLE proj_field (
   END OF TABLES
 */
 
-/*---------------------------------------------------------------------------------*/
+/***********************************************************************************/
 
 /*
   START OF INDEXES
@@ -236,7 +238,7 @@ CREATE INDEX idx_sup_res_id ON project(sup_res_id);
   END OF INDEXES
 */
 
-/*--------------------------------------------------------------------------------*/
+/*********************************************************************************/
 
 /*
   START OF VIEWS
@@ -256,7 +258,7 @@ CREATE VIEW projects_per_institution_per_year
   END OF VIEWS
 */
 
-/*--------------------------------------------------------------------------------*/
+/**************************************************************************************/
 
 SET FOREIGN_KEY_CHECKS = 1;
 /* Check foreign key constraints (default)*/
