@@ -234,6 +234,10 @@ CREATE UNIQUE INDEX idx_ass_id ON project(ass_id);
 CREATE INDEX idx_ass_res_id ON project(ass_res_id);
 CREATE INDEX idx_sup_res_id ON project(sup_res_id);
 
+CREATE INDEX idx_start_date ON project(start); 
+CREATE INDEX idx_end_date ON project(end); 
+CREATE INDEX idx_date_of_birth ON researcher(date_of_birth); 
+
 /*
   END OF INDEXES
 */
