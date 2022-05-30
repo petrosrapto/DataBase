@@ -9,5 +9,7 @@ INNER JOIN
 (SELECT * FROM project 
  WHERE proj_id not in (SELECT proj_id FROM deliverable)) p 
 ON w.proj_id = p.proj_id
+WHERE p.start <= current_date()  AND p.end >= current_date()
 GROUP BY r.res_id
-HAVING count(*) >= 5;
+HAVING count(*) >= 5
+ORDER BY num_of_projects DESC;
