@@ -1,0 +1,174 @@
+{% extends "global_layout.html" %}
+{% block content %}
+<div class="container">
+    {% include "flash_messages.html" %}
+    <div class="row" id="row">
+        <div class="col-md-5"></div>
+        <div class="col-md-7">
+            <form class="form-inline form-horizontal" name="project-form" method="POST">
+                <!-- hidden_tag returns the form's security metadata -->
+                {{ form.hidden_tag() }}
+                <div class="form-group col-sm-3 mb-3">
+                    {{ form.exec_name.label(class = "form-label") }}
+                    <!-- Setting required to false disables the HTML attribute and leaves input validation to the backend -->
+                    {{ form.exec_name(class = "form-control", placeholder="Enter Name", required = False) }}
+                    {% if form.exec_name.errors %}
+                    <ul class = "errors">
+                        {% for error in form.exec_name.errors %}
+                        <li class = "text-danger">{{ error }}</li>
+                        {% endfor %}
+                    </ul>
+                    {% endif %}
+                </div>
+                <div class="form-group col-sm-3 mb-3">
+                    {{ form.start.label(class = "form-label") }}
+                    <!-- Setting required to false disables the HTML attribute and leaves input validation to the backend -->
+                    {{ form.start(class = "form-control", required = False) }}
+                    {% if form.start.errors %}
+                    <ul class = "errors">
+                        {% for error in form.start.errors %}
+                        <li class = "text-danger">{{ error }}</li>
+                        {% endfor %}
+                    </ul>
+                    {% endif %}
+                </div>
+                <div class="form-group col-sm-3 mb-3">
+                    {{ form.end.label(class = "form-label") }}
+                    <!-- Setting required to false disables the HTML attribute and leaves input validation to the backend -->
+                    {{ form.end(class = "form-control", required = False) }}
+                    {% if form.end.errors %}
+                    <ul class = "errors">
+                        {% for error in form.end.errors %}
+                        <li class = "text-danger">{{ error }}</li>
+                        {% endfor %}
+                    </ul>
+                    {% endif %}
+                </div>
+                <div class="form-group col-sm-3 mb-3">
+                    {{ form.duration.label(class = "form-label") }}
+                    <!-- Setting required to false disables the HTML attribute and leaves input validation to the backend -->
+                    {{ form.duration(class = "form-control", required = False) }}
+                    {% if form.duration.errors %}
+                    <ul class = "errors">
+                        {% for error in form.duration.errors %}
+                        <li class = "text-danger">{{ error }}</li>
+                        {% endfor %}
+                    </ul>
+                    {% endif %}
+                </div>
+                {{ form.submit(class = "btn btn-primary btn-submit-custom") }}
+                {{ form.clear(class = "btn btn-primary btn-submit-custom") }}
+            </form>
+        </div>
+    </div>
+    <div class="row" id="row">
+        <div class="col-md-12">
+            <div class="card" id="card-container">
+                <div class="card-body" id="card">
+                {% if projects|length == 0 %}
+                    <!-- |length is a jinja2 filter that returns the amount of items in a sequence -->
+                    <h1 style="margin-top: 5rem;">No Projects found!</h1>
+                {% else %}
+                    <div class="table-responsive">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Title</th>
+                                    <th>Description</th>
+                                    <th>Start Date</th>
+                                    <th>End Date</th>
+                                    <th>Fund Amount</th>
+                                    <th></th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for project in projects %}
+                                    <tr>
+                                        <td> {{ project.proj_id }} </td>
+                                        <td> {{ project.title }} </td>
+                                        <td> {{ project.description }} </td>
+                                        <td> {{ project.start }} </td>
+                                        <td> {{ project.end }} </td>
+                                        <td> {{ project.fund }} </td>
+                                        <td>
+                                            <button style = "all: unset; cursor: pointer;" type = "button"
+                                            data-bs-toggle = "modal" data-bs-target = "#resModal"
+                                            data-id = "{{ project.proj_id }}" onclick = "setModalFieldsRes(this)">
+                                                <i class = "fa fa-eye"></i>
+                                            </button>
+                                        </td>
+                                        <td>
+                                            <button style = "all: unset; cursor: pointer;" type = "button"
+                                            data-bs-toggle = "modal" data-bs-target = "#deleteModal"
+                                            data-id = "{{ project.proj_id }}" onclick = "setModalFieldsDel(this)">
+                                                <i class = "fa fa-trash"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal -->
+<div class = "modal fade" id="resModal">
+    <div class = "modal-dialog">
+        <div class = "modal-content">
+            <div class = "modal-header">
+                <h5 class = "modal-title" id = "resModalLabel">View researchers</h5>
+                <button type = "button" class = "btn-close" data-bs-dismiss = "modal" aria-label = "Close"></button>
+            </div>
+            <div class = "modal-body">
+                Show me the researchers working on the project.
+            </div>
+            <div class = "modal-footer">
+                <button type = "button" class = "btn btn-secondary" data-bs-dismiss = "modal">No</button>
+                <form id = "view-modal-form">
+                    <input type = "submit" class = "btn btn-danger" value = "Yes">
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal -->
+<div class = "modal fade" id="deleteModal">
+    <div class = "modal-dialog">
+        <div class = "modal-content">
+            <div class = "modal-header">
+                <h5 class = "modal-title" id = "deleteModalLabel">Delete grade</h5>
+                <button type = "button" class = "btn-close" data-bs-dismiss = "modal" aria-label = "Close"></button>
+            </div>
+            <div class = "modal-body">
+                Are you sure?
+            </div>
+            <div class = "modal-footer">
+                <button type = "button" class = "btn btn-secondary" data-bs-dismiss = "modal">Close</button>
+                <form id = "modal-form">
+                    <input type = "submit" class = "btn btn-danger" value = "Delete">
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function setModalFieldsDel(row) {
+        document.getElementById("modal-form").action = "/grades/delete/" + row.getAttribute("data-id");
+        document.getElementById("modal-form").method = "POST";
+    }
+
+    function setModalFieldsRes(row) {
+        document.getElementById("view-modal-form").action = "/projects/researchers/" + row.getAttribute("data-id");
+        document.getElementById("view-modal-form").method = "GET";
+    }
+</script>
+{% endblock content %}

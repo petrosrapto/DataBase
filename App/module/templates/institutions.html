@@ -1,0 +1,77 @@
+{% extends "global_layout.html" %}
+{% block content %}
+<div class="container">
+    {% include "flash_messages.html" %}
+    <div class="row" id="row">
+        <div class="col-md-4"></div>
+        <div class="col-md-4">
+           <div class="card" id="card-container">
+               <div class="card-body" id="card">
+                    <p class="card-text" id="paragraph"><br>Show me the institutions, which have received
+                    the same amount of projects for two consecutive years with at least
+                    10 projects yearly.</p>
+                    <a class="btn btn-primary" id="show-btn" href="{{ url_for('getInstitutions', listOfObjects='pressed') }}">Show</a>
+               </div>
+           </div>
+        </div>
+    </div>
+    <div class="row" id="row">
+        <div class="col-md-12">
+            <div class="card" id="card-container">
+                <div class="card-body" id="card">
+                {% if institutions|length == 0 %}
+                    <h1 style="margin-top: 5rem;">No Institutions found!</h1>
+                {% else %}
+                    <div class="table-responsive">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Abbreviation</th>
+                                    <th>Name</th>
+                                    <!-- Check if address is given -->
+                                    {% if "address" in institutions[0] %}
+                                        <th>Address</th>
+                                    {% endif %}
+                                    {% if "first_year" in institutions[0] %}
+                                        <th>First Year</th>
+                                    {% endif %}
+                                    {% if "second_year" in institutions[0] %}
+                                        <th>Second Year</th>
+                                    {% endif %}
+                                    {% if "projects_each_year" in institutions[0] %}
+                                        <th>Projects Each Year</th>
+                                    {% endif %}
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for institution in institutions %}
+                                    <tr>
+                                        <td> {{ institution.ins_id }} </td>
+                                        <td> {{ institution.abbreviation }} </td>
+                                        <td> {{ institution.name }} </td>
+                                        {% if "address" in institutions[0] %}
+                                          <td> {{ institution.address }} </td>
+                                        {% endif %}
+                                        {% if "first_year" in institutions[0] %}
+                                            <td> {{ institution.first_year }} </td>
+                                        {% endif %}
+                                        {% if "second_year" in institutions[0] %}
+                                            <td> {{ institution.second_year }} </td>
+                                        {% endif %}
+                                        {% if "projects_each_year" in institutions[0] %}
+                                            <td> {{ institution.projects_each_year }} </td>
+                                        {% endif %}
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock content %}

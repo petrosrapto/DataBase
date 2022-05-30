@@ -1,0 +1,110 @@
+{% extends "global_layout.html" %}
+{% block content %}
+<div class="container">
+    {% include "flash_messages.html" %}
+    <div class="row" id="row">
+        <div class="col-md-12">
+            <div class="card" id="card-container">
+                <div class="card-body" id="card">
+                {% if fields|length == 0 %}
+                    <h1 style="margin-top: 5rem;">No Fields found!</h1>
+                {% else %}
+                    <div class="table-responsive">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Name</th>
+                                    <th>Description</th>
+                                    <th></th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for field in fields %}
+                                    <tr>
+                                        <td> {{ field.field_id }} </td>
+                                        <td> {{ field.field_name }} </td>
+                                        <td> {{ field.description }} </td>
+                                        <td>
+                                          <button style = "all: unset; cursor: pointer;" type = "button"
+                                          data-bs-toggle = "modal" data-bs-target = "#projectModal"
+                                          data-id = "{{ field.field_id }}" onclick = "setProjectModalFields(this)">
+                                                <i class="fa-solid fa-vial"></i>
+                                            </button>
+                                        </td>
+                                        <td>
+                                            <button style = "all: unset; cursor: pointer;" type = "button"
+                                            data-bs-toggle = "modal" data-bs-target = "#researcherModal"
+                                            data-id = "{{ field.field_id }}" onclick = "setResearcherModalFields(this)">
+                                                <i class="fa-solid fa-user-graduate"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- Projects modal -->
+<div class = "modal fade" id="projectModal">
+    <div class = "modal-dialog">
+        <div class = "modal-content">
+            <div class = "modal-header">
+                <h5 class = "modal-title" id = "projectModalLabel">Show Projects</h5>
+                <button type = "button" class = "btn-close" data-bs-dismiss = "modal" aria-label = "Close"></button>
+            </div>
+            <div class = "modal-body">
+                Show me the active projects having received funds and are related to the selected research field.
+            </div>
+            <div class = "modal-footer">
+                <button type = "button" class = "btn btn-secondary" data-bs-dismiss = "modal">No</button>
+                <form id = "project-modal-form">
+                    <input type = "submit" class = "btn btn-danger" value = "Yes">
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Delete modal -->
+<div class = "modal fade" id="researcherModal">
+    <div class = "modal-dialog">
+        <div class = "modal-content">
+            <div class = "modal-header">
+                <h5 class = "modal-title" id = "researcherModalLabel">Show Researcher</h5>
+                <button type = "button" class = "btn-close" data-bs-dismiss = "modal" aria-label = "Close"></button>
+            </div>
+            <div class = "modal-body">
+                Show me the researchers working (within the past year) on projects related to the selected research field.
+            </div>
+            <div class = "modal-footer">
+                <button type = "button" class = "btn btn-secondary" data-bs-dismiss = "modal">No</button>
+                <form id = "researcher-modal-form">
+                    <input type = "submit" class = "btn btn-danger" value = "Yes">
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+  function setProjectModalFields(row) {
+      document.getElementById("project-modal-form").action = "/fields/projects/" + row.getAttribute("data-id");
+      document.getElementById("project-modal-form").method = "GET";
+  }
+
+  function setResearcherModalFields(row) {
+      document.getElementById("researcher-modal-form").action = "/fields/researchers/" + row.getAttribute("data-id");
+      document.getElementById("researcher-modal-form").method = "GET";
+  }
+</script>
+
+{% endblock content %}

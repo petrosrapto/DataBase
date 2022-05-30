@@ -6,49 +6,144 @@
         <div class="col-md-4">
             <div class="card" id="card-container-layout">
                 <div class="card-body" id="card">
-                    <h4 class="card-title">View Programs</h4>
-                    <p class="card-text" id="paragraph">Simple Query to database to show all programs</p>
+                    <h4 class="card-title"><br>View Programs</h4>
+                    <p class="card-text" id="paragraph"><br>Show all programs running under
+                      the auspices of the H.F.R.I.</p>
                     <a class="btn btn-primary" id="show-btn" href="/programs">Show</a>
+                    <p><br></p>
                 </div>
             </div>
         </div>
         <div class="col-md-4">
             <div class="card" id="card-container-layout">
                 <div class="card-body" id="card">
-                    <h4 class="card-title">View Grades</h4>
-                    <p class="card-text" id="paragraph">Simple Query to database to show students' grades<br></p>
-                    <a class="btn btn-primary" id="show-btn" href="/grades">Show</a>
+                    <h4 class="card-title"><br>View Projects</h4>
+                    <p class="card-text" id="paragraph"><br>Search projects by multiple criteria<br><br></p>
+                    <a class="btn btn-primary" id="show-btn" href="/projects">Show</a>
+                    <p><br></p>
                 </div>
             </div>
         </div>
         <div class="col-md-4">
             <div class="card" id="card-container-layout">
                 <div class="card-body" id="card">
-                    <h4 class="card-title">Create Program</h4>
-                    <p class="card-text" id="paragraph">Enter a new program into the database<br></p>
+                    <h4 class="card-title"><br>Create Program</h4>
+                    <p class="card-text" id="paragraph"><br>Enter a new program into the database<br><br></p>
                     <a class="btn btn-primary" id="show-btn" href="/programs/create">Create</a>
+                    <p><br></p>
                 </div>
             </div>
         </div>
     </div>
 
     <div class="row" id="row-2">
-        <div class="col-md-6">
+        <div class="col-md-4">
             <div class="card" id="card-container-layout">
                 <div class="card-body" id="card">
-                    <h4 class="card-title">Best Dribbling Grade</h4>
-                    <p class="card-text" id="paragraph">The best Dribbling grade is {{best_dribbling_grade}} and belongs to {{best_dribbler}}.</p>
+                    <h4 class="card-title"><br>View<br>Research Fields</h4>
+                    <p class="card-text" id="paragraph"><br>View all research fields
+                      along with associated projects and researchers<br></p>
+                    <a class="btn btn-primary" id="show-btn" href="/fields">Show</a>
+                    <p><br></p>
                 </div>
             </div>
         </div>
-        <div class="col-md-6">
+        <div class="col-md-4">
             <div class="card" id="card-container-layout">
                 <div class="card-body" id="card">
-                    <h4 class="card-title">Best Shooting Grade</h4>
-                    <p class="card-text" id="paragraph">The best Shooting grade is {{best_shooting_grade}} and belongs to {{best_shooter}}.</p>
+                    <h4 class="card-title"><br>View<br>Institutions</h4>
+                    <p class="card-text" id="paragraph"><br>View all institutions as well as
+                      other filtering options<br></p>
+                    <a class="btn btn-primary" id="show-btn" href="/institutions">Show</a>
+                    <p><br></p>
                 </div>
             </div>
         </div>
+        <div class="col-md-4">
+            <div class="card" id="card-container-layout">
+                <div class="card-body" id="card">
+                    <h4 class="card-title"><br>View<br>Researchers</h4>
+                    <p class="card-text" id="paragraph"><br>View all researchers as well as
+                      other filtering options<br></p>
+                    <a class="btn btn-primary" id="show-btn" href="/researchers">Show</a>
+                    <p><br></p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row" id="row-2">
+      <div class="col-md-12">
+          <div class="card" id="card-container">
+              <div class="card-body" id="card">
+                  <h4 class="card-title">Top-3 Research Fields</h4>
+                  <p class="card-text" id="paragraph">Most popular pairs of research fields
+                    among all projects (active and non-active):<br></p>
+                  {% if topFields|length == 0 %}
+                      <h1 style="margin-top: 5rem;">No Top Fields found!</h1>
+                  {% else %}
+                      <div class="table-responsive">
+                          <table class="table">
+                              <thead>
+                                  <tr>
+                                      <th>No</th>
+                                      <th>Field Name</th>
+                                      <th>Field Name</th>
+                                      <th>Projects</th>
+                                  </tr>
+                              </thead>
+                              <tbody>
+                                  {% for i in range(topFields|length) %}
+                                      <tr>
+                                          <td> {{ i+1 }} </td>
+                                          <td> {{ topFields[i].get("field1") }} </td>
+                                          <td> {{ topFields[i].get("field2") }} </td>
+                                          <td> {{ topFields[i].get("popularity") }} </td>
+                                      </tr>
+                                  {% endfor %}
+                              </tbody>
+                          </table>
+                      </div>
+                  {% endif %}
+              </div>
+          </div>
+      </div>
+    </div>
+    <div class="row" id="row-2">
+      <div class="col-md-12">
+          <div class="card" id="card-container">
+              <div class="card-body" id="card">
+                  <h4 class="card-title">Top-5 Funds/Executive</h4>
+                  <p class="card-text" id="paragraph">Top-5 fund amounts given to a single company
+                    by a single HFRI's executive.<br></p>
+                  {% if topExec|length == 0 %}
+                      <h1 style="margin-top: 5rem;">No Top Executives found!</h1>
+                  {% else %}
+                      <div class="table-responsive">
+                          <table class="table">
+                              <thead>
+                                  <tr>
+                                      <th>No</th>
+                                      <th>Executive's Name</th>
+                                      <th>Funded Company</th>
+                                      <th>Total Fund Amount</th>
+                                  </tr>
+                              </thead>
+                              <tbody>
+                                  {% for i in range(topExec|length) %}
+                                      <tr>
+                                          <td> {{ i+1 }} </td>
+                                          <td> {{ topExec[i].get("executive_name") }} </td>
+                                          <td> {{ topExec[i].get("company_name") }} </td>
+                                          <td> {{ topExec[i].get("total_fund") }} </td>
+                                      </tr>
+                                  {% endfor %}
+                              </tbody>
+                          </table>
+                      </div>
+                  {% endif %}
+              </div>
+          </div>
+      </div>
     </div>
 </div>
 {% endblock content %}
