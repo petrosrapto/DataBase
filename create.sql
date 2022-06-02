@@ -51,7 +51,7 @@ CREATE TABLE ins_phone (
   phone_number VARCHAR(20) NOT NULL,     /* not null cause its primary key */
   PRIMARY KEY (ins_id, phone_number),
   CONSTRAINT fk_phone_ins FOREIGN KEY (ins_id)
-    REFERENCES institution (ins_id) ON DELETE RESTRICT ON UPDATE CASCADE
+    REFERENCES institution (ins_id) ON DELETE CASCADE ON UPDATE CASCADE
 )ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 
@@ -61,7 +61,7 @@ CREATE TABLE university (
   Public_funds INT UNSIGNED NULL,
   PRIMARY KEY (ins_id),
   CONSTRAINT fk_uni_ins FOREIGN KEY (ins_id)
-    REFERENCES institution (ins_id) ON DELETE RESTRICT ON UPDATE CASCADE
+    REFERENCES institution (ins_id) ON DELETE CASCADE ON UPDATE CASCADE
 )ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 DROP TABLE IF EXISTS research_center;
@@ -71,7 +71,7 @@ CREATE TABLE research_center (
   Private_funds INT UNSIGNED NULL,
   PRIMARY KEY (ins_id),
   CONSTRAINT fk_resCenter_ins FOREIGN KEY (ins_id)
-    REFERENCES institution (ins_id) ON DELETE RESTRICT ON UPDATE CASCADE
+    REFERENCES institution (ins_id) ON DELETE CASCADE ON UPDATE CASCADE
 )ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 DROP TABLE IF EXISTS company;
@@ -80,7 +80,7 @@ CREATE TABLE company (
   Equity INT UNSIGNED NULL,
   PRIMARY KEY (ins_id),
   CONSTRAINT fk_comp_ins FOREIGN KEY (ins_id)
-    REFERENCES institution (ins_id) ON DELETE RESTRICT ON UPDATE CASCADE
+    REFERENCES institution (ins_id) ON DELETE CASCADE ON UPDATE CASCADE
 )ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 DROP TABLE IF EXISTS program;
@@ -176,7 +176,7 @@ CREATE TABLE works (
   CONSTRAINT fk_works_res FOREIGN KEY (res_id)
     REFERENCES researcher (res_id) ON DELETE RESTRICT ON UPDATE CASCADE,
   CONSTRAINT fk_works_proj FOREIGN KEY (proj_id)
-    REFERENCES project (proj_id) ON DELETE RESTRICT ON UPDATE CASCADE
+    REFERENCES project (proj_id) ON DELETE CASCADE ON UPDATE CASCADE
 )ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 
@@ -209,7 +209,7 @@ CREATE TABLE proj_field (
   CONSTRAINT fk_field_proj FOREIGN KEY (proj_id)
     REFERENCES project (proj_id) ON DELETE RESTRICT ON UPDATE CASCADE,
   CONSTRAINT fk_proj_field FOREIGN KEY (field_id)
-    REFERENCES research_field (field_id) ON DELETE RESTRICT ON UPDATE CASCADE
+    REFERENCES research_field (field_id) ON DELETE CASCADE ON UPDATE CASCADE
 )ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 
