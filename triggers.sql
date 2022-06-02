@@ -102,7 +102,9 @@ END $$
 
 
 DELIMITER $$
-CREATE TRIGGER manager_last_to_be_deleted
+DROP TRIGGER IF EXISTS supervisor_last_to_be_deleted$$
+/* make sure that the supervisor is the last researcher to be deleted */
+CREATE TRIGGER supervisor_last_to_be_deleted
 before delete
 ON works FOR EACH ROW
 BEGIN
