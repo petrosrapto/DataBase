@@ -39,7 +39,6 @@ Just like ASCII, UTF-8 is a standard code used to transform alphabets and
 characters into bits which computers understand. UTF-8 has already mapped
 almost all the characters we use to a 8-bit size value. This is the most
 popular character set used recently.
-
 ENGINE=InnoDB
 InnoDB is a database storage engine. database storage engine is by which
 tables are stored, retrieved and handled. InnoDB is the fastest storage
@@ -189,7 +188,7 @@ CREATE TABLE deliverable (
   date DATE NOT NULL,
   PRIMARY KEY (proj_id, title, description),
   CONSTRAINT fk_del_proj FOREIGN KEY (proj_id)
-    REFERENCES project (proj_id) ON DELETE RESTRICT ON UPDATE CASCADE
+    REFERENCES project (proj_id) ON DELETE CASCADE ON UPDATE CASCADE
 )ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 
@@ -234,9 +233,9 @@ CREATE UNIQUE INDEX idx_ass_id ON project(ass_id);
 CREATE INDEX idx_ass_res_id ON project(ass_res_id);
 CREATE INDEX idx_sup_res_id ON project(sup_res_id);
 
-CREATE INDEX idx_start_date ON project(start); 
-CREATE INDEX idx_end_date ON project(end); 
-CREATE INDEX idx_date_of_birth ON researcher(date_of_birth); 
+CREATE INDEX idx_start_date ON project(start);
+CREATE INDEX idx_end_date ON project(end);
+CREATE INDEX idx_date_of_birth ON researcher(date_of_birth);
 
 /*
   END OF INDEXES
@@ -247,6 +246,20 @@ CREATE INDEX idx_date_of_birth ON researcher(date_of_birth);
 /*
   START OF VIEWS
 */
+
+DROP VIEW IF EXISTS projects_per_researcher;
+CREATE VIEW projects_per_researcher
+(res_id, first_name, last_name, num_of_projects)
+ AS
+ SELECT r.res_id, r.first_name, r.last_name, count(*) FROM researcher r
+ INNER JOIN works w
+ ON r.res_id = w.res_id
+ GROUP BY r.res_id
+ UNION
+ SELECT r.res_id, r.first_name, r.last_name, 0 FROM researcher r
+ LEFT OUTER JOIN works w
+ ON r.res_id = w.res_id
+ WHERE w.proj_id IS NULL;
 
 DROP VIEW IF EXISTS projects_per_institution_per_year;
 CREATE VIEW projects_per_institution_per_year
@@ -264,5 +277,5 @@ CREATE VIEW projects_per_institution_per_year
 
 /**************************************************************************************/
 
-SET FOREIGN_KEY_CHECKS = 1;
+ SET FOREIGN_KEY_CHECKS = 1;
 /* Check foreign key constraints (default)*/

@@ -2,19 +2,30 @@
 {% block content %}
 <div class="container">
     {% include "flash_messages.html" %}
-    <div class="row" id="row">
+    <div class="row" id="row-2">
+        <div class="col-md-4"></div>
+        <div class="col-md-4">
+           <div class="card" id="card-container">
+               <div class="card-body" id="card">
+                    <p class="card-text" id="paragraph"><br><br>Show me in how many projects<br>each researcher has participated.</p>
+                    <a class="btn btn-primary" id="show-btn" href="{{ url_for('getResearchers', listOfObjects='pressed_1') }}">Show</a>
+               </div>
+           </div>
+        </div>
+    </div>
+    <div class="row" id="row-2">
         <div class="col-md-4"></div>
         <div class="col-md-4">
            <div class="card" id="card-container">
                <div class="card-body" id="card">
                     <p class="card-text" id="paragraph"><br><br>Show me the researchers working on 5 or more projects,
                     which don't have any deliverables.</p>
-                    <a class="btn btn-primary" id="show-btn" href="{{ url_for('getResearchers', listOfObjects='pressed') }}">Show</a>
+                    <a class="btn btn-primary" id="show-btn" href="{{ url_for('getResearchers', listOfObjects='pressed_2') }}">Show</a>
                </div>
            </div>
         </div>
     </div>
-    <div class="row" id="row">
+    <div class="row" id="row-2">
         <div class="col-md-12">
             <div class="card" id="card-container">
                 <div class="card-body" id="card">

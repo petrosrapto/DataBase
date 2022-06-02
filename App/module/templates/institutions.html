@@ -2,7 +2,18 @@
 {% block content %}
 <div class="container">
     {% include "flash_messages.html" %}
-    <div class="row" id="row">
+    <div class="row" id="row-2">
+        <div class="col-md-4"></div>
+        <div class="col-md-4">
+           <div class="card" id="card-container">
+               <div class="card-body" id="card">
+                    <p class="card-text" id="paragraph"><br>Show me how many projects each institution managed each year.</p>
+                    <a class="btn btn-primary" id="show-btn" href="{{ url_for('getInstitutions', listOfObjects='pressed_1') }}">Show</a>
+               </div>
+           </div>
+        </div>
+    </div>
+    <div class="row" id="row-2">
         <div class="col-md-4"></div>
         <div class="col-md-4">
            <div class="card" id="card-container">
@@ -10,12 +21,12 @@
                     <p class="card-text" id="paragraph"><br>Show me the institutions, which have received
                     the same amount of projects for two consecutive years with at least
                     10 projects yearly.</p>
-                    <a class="btn btn-primary" id="show-btn" href="{{ url_for('getInstitutions', listOfObjects='pressed') }}">Show</a>
+                    <a class="btn btn-primary" id="show-btn" href="{{ url_for('getInstitutions', listOfObjects='pressed_2') }}">Show</a>
                </div>
            </div>
         </div>
     </div>
-    <div class="row" id="row">
+    <div class="row" id="row-2">
         <div class="col-md-12">
             <div class="card" id="card-container">
                 <div class="card-body" id="card">
@@ -42,6 +53,12 @@
                                     {% if "projects_each_year" in institutions[0] %}
                                         <th>Projects Each Year</th>
                                     {% endif %}
+                                    {% if "projects" in institutions[0] %}
+                                        <th>Projects</th>
+                                    {% endif %}
+                                    {% if "year" in institutions[0] %}
+                                        <th>Year</th>
+                                    {% endif %}
                                 </tr>
                             </thead>
                             <tbody>
@@ -61,6 +78,12 @@
                                         {% endif %}
                                         {% if "projects_each_year" in institutions[0] %}
                                             <td> {{ institution.projects_each_year }} </td>
+                                        {% endif %}
+                                        {% if "projects" in institutions[0] %}
+                                            <td> {{ institution.projects }} </td>
+                                        {% endif %}
+                                        {% if "year" in institutions[0] %}
+                                            <td> {{ institution.year }} </td>
                                         {% endif %}
                                     </tr>
                                 {% endfor %}

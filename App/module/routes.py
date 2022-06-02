@@ -34,8 +34,21 @@ def index():
         ## thus we manually create a mapping between the two, the dictionary res
         column_names = [i[0] for i in cur.description]
         topExec = [dict(zip(column_names, entry)) for entry in cur.fetchall()]
+
+        query = "SELECT r.first_name, r.last_name, floor(DATEDIFF(current_date(), r.date_of_birth) / 365.25) AS age, \
+        count(*) AS total_projects FROM researcher r \
+        INNER JOIN works w ON r.res_id = w.res_id \
+        INNER JOIN project p ON w.proj_id = p.proj_id \
+        WHERE floor(DATEDIFF(current_date(), r.date_of_birth) / 365.25) <= 40 AND (p.start <= current_date() AND p.end >= current_date()) \
+        GROUP BY r.res_id ORDER BY count(*) DESC LIMIT 10;"
+        cur.execute(query)
+        ## cursor.fetchone() does not return the column names, only the row values
+        ## thus we manually create a mapping between the two, the dictionary res
+        column_names = [i[0] for i in cur.description]
+        topRes = [dict(zip(column_names, entry)) for entry in cur.fetchall()]
+
         cur.close()
-        return render_template("landing.html", pageTitle = "Home Page", topFields = topFields, topExec = topExec)
+        return render_template("landing.html", pageTitle = "Home Page", topFields = topFields, topExec = topExec, topRes = topRes)
     except Exception as e:
         print(e)
         return render_template("landing.html", pageTitle = "Home Page")
@@ -263,13 +276,13 @@ def getInstitutions():
             query = "SELECT i.ins_id, i.abbreviation, i.name, \
             CONCAT(i.street_name,' ',i.street_number,', ',i.city,' ',i.zip) AS address \
             FROM institution i;"
-        else:
+        elif (btnPressed == 'pressed_2'):
             query = "SELECT i.ins_id, i.abbreviation, i.name, \
             i.year AS first_year, j.year AS second_year, i.projects AS projects_each_year \
             FROM projects_per_institution_per_year i INNER JOIN projects_per_institution_per_year j\
             ON i.ins_id = j.ins_id WHERE i.year = j.year - 1 AND i.projects = j.projects AND i.projects >= 10;"
-
-            """ QUERY MUST CHANGE i.projects >= 10; """
+        else:
+            query = "SELECT * FROM projects_per_institution_per_year ORDER BY ins_id, year;"
 
         cur = db.connection.cursor()
         cur.execute(query)
@@ -291,7 +304,7 @@ def getResearchers():
         btnPressed=request.args.get('listOfObjects') # argument from button pressed
         if (btnPressed == None):
             query = "SELECT r.res_id, r.first_name, r.last_name, r.sex, r.date_of_birth FROM researcher r;"
-        else:
+        elif (btnPressed == 'pressed_2'):
             query = "SELECT r.res_id, r.first_name, r.last_name, count(*) AS num_of_projects \
             FROM researcher r INNER JOIN works w ON r.res_id = w.res_id \
             INNER JOIN (SELECT * FROM project \
@@ -299,8 +312,8 @@ def getResearchers():
             ON w.proj_id = p.proj_id \
             WHERE p.start <= current_date()  AND p.end >= current_date() \
             GROUP BY r.res_id HAVING count(*) >= 5 ORDER BY num_of_projects DESC;"
-
-            """ QUERY MUST CHANGE HAVING count(*) >= 5"""
+        else:
+            query = "SELECT * FROM projects_per_researcher ORDER BY res_id;"
 
         cur = db.connection.cursor()
         cur.execute(query)

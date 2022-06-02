@@ -145,5 +145,44 @@
           </div>
       </div>
     </div>
+    <div class="row" id="row-2">
+      <div class="col-md-12">
+          <div class="card" id="card-container">
+              <div class="card-body" id="card">
+                  <h4 class="card-title">Top-10 Young Researchers</h4>
+                  <p class="card-text" id="paragraph">Top-10 researchers (under 40 years old) working
+                    on the most projects (active).<br></p>
+                  {% if topExec|length == 0 %}
+                      <h1 style="margin-top: 5rem;">No Top Researchers found!</h1>
+                  {% else %}
+                      <div class="table-responsive">
+                          <table class="table">
+                              <thead>
+                                  <tr>
+                                      <th>No</th>
+                                      <th>First Name</th>
+                                      <th>Last Name</th>
+                                      <th>Age</th>
+                                      <th>Projects</th>
+                                  </tr>
+                              </thead>
+                              <tbody>
+                                  {% for i in range(topRes|length) %}
+                                      <tr>
+                                          <td> {{ i+1 }} </td>
+                                          <td> {{ topRes[i].get("first_name") }} </td>
+                                          <td> {{ topRes[i].get("last_name") }} </td>
+                                          <td> {{ topRes[i].get("age") }} </td>
+                                          <td> {{ topRes[i].get("total_projects") }} </td>
+                                      </tr>
+                                  {% endfor %}
+                              </tbody>
+                          </table>
+                      </div>
+                  {% endif %}
+              </div>
+          </div>
+      </div>
+    </div>
 </div>
 {% endblock content %}
