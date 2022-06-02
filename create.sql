@@ -103,7 +103,7 @@ CREATE TABLE assessment (
   ass_id INT UNSIGNED NOT NULL AUTO_INCREMENT,
   grade TINYINT NOT NULL,
   date DATE NOT NULL,
-  CONSTRAINT con_grade CHECK (grade >= 40),
+  CONSTRAINT con_grade CHECK (grade between 40 AND 100),
   PRIMARY KEY (ass_id)
 )ENGINE=InnoDB AUTO_INCREMENT=13001 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
@@ -207,9 +207,9 @@ CREATE TABLE proj_field (
   field_id INT UNSIGNED NOT NULL,
   PRIMARY KEY (proj_id, field_id),
   CONSTRAINT fk_field_proj FOREIGN KEY (proj_id)
-    REFERENCES project (proj_id) ON DELETE RESTRICT ON UPDATE CASCADE,
+    REFERENCES project (proj_id) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT fk_proj_field FOREIGN KEY (field_id)
-    REFERENCES research_field (field_id) ON DELETE CASCADE ON UPDATE CASCADE
+    REFERENCES research_field (field_id) ON DELETE RESTRICT ON UPDATE CASCADE
 )ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 
