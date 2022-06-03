@@ -59,19 +59,20 @@
     <div class="modal-dialog">
         <!-- Modal content-->
         <div class="modal-content">
-            <div class="modal-header">
-                <h4 class="modal-title">Edit Program</h4>
+            <div class="modal-header text-center">
+                <h4 class="modal-title w-100">Edit Program</h4>
             </div>
             <div class="modal-body">
-                <form id="modal-form">
+                <form class="form-horizontal" id="modal-form">
                     {{ form.hidden_tag() }}
-                    <div style="text-align: center;">
-                        <input type="text" name="id" id="id" readonly>
-                        <!-- Setting required to false disables the HTML attribute and leaves input validation to the backend -->
-                        {{ form.name(id = "name", required = False) }}
-                        {{ form.department(id = "department", required = False) }}
+                    <div class="form-group col-sm-3 mb-3 col-centered" style="text-align: center;">
+                        <label for="id" class = "form-label">ID</label><br>
+                        <input class = "form-control" type="text" name="id" id="id" readonly style="text-align:center;">
                     </div>
-                    <div>
+                    <div class="form-group col-sm-12 mb-3" style="text-align: center;">
+                        {{ form.name.label(class = "form-label") }}
+                        <!-- Setting required to false disables the HTML attribute and leaves input validation to the backend -->
+                        {{ form.name(class = "form-control", id = "name", required = False, style="text-align:center;") }}
                         {% if form.name.errors %}
                         <ul class = "errors">
                             {% for error in form.name.errors %}
@@ -79,6 +80,11 @@
                             {% endfor %}
                         </ul>
                         {% endif %}
+                    </div>
+                    <div class="form-group col-sm-12 mb-3" style="text-align: center;">
+                        {{ form.department.label(class = "form-label") }}
+                        <!-- Setting required to false disables the HTML attribute and leaves input validation to the backend -->
+                        {{ form.department(class = "form-control", id = "department", required = False, style="text-align:center;") }}
                         {% if form.department.errors %}
                         <ul class = "errors">
                             {% for error in form.department.errors %}
@@ -89,7 +95,7 @@
                     </div>
                 </form>
             </div>
-            <div class="modal-footer">
+            <div class="modal-footer col-centered">
                 {{ form.submit(class = "btn btn btn-success", form = "modal-form", value = "Update") }}
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
             </div>
@@ -102,14 +108,14 @@
 <div class = "modal fade" id="deleteModal">
     <div class = "modal-dialog">
         <div class = "modal-content">
-            <div class = "modal-header">
-                <h5 class = "modal-title" id = "deleteModalLabel">Delete program</h5>
+            <div class = "modal-header text-center">
+                <h5 class = "modal-title w-100" id = "deleteModalLabel">Delete Program</h5>
                 <button type = "button" class = "btn-close" data-bs-dismiss = "modal" aria-label = "Close"></button>
             </div>
             <div class = "modal-body">
                 All associated projects will be deleted too. Are you sure?
             </div>
-            <div class = "modal-footer">
+            <div class = "modal-footer col-centered">
                 <button type = "button" class = "btn btn-secondary" data-bs-dismiss = "modal">Close</button>
                 <form id = "delete-modal-form">
                     <input type = "submit" class = "btn btn-danger" value = "Delete">

@@ -1,10 +1,11 @@
 from flask import Flask, render_template, request, flash, redirect, url_for, abort
 from flask_mysqldb import MySQL
 from module import app, db ## initially created by __init__.py, need to be used here
-from module.forms import ProgramForm, ProjectForm
+from module.forms import ProgramForm, ProjectForm, FieldForm, InstitutionForm, ProjectUpdateForm, ResearcherUpdateForm
 
 @app.route("/")
 def index():
+
     try:
         ## create connection to database
         cur = db.connection.cursor()
@@ -89,7 +90,7 @@ def createProgram():
             flash("Program inserted successfully", "success")
             return redirect(url_for("index"))
         except Exception as e: ## OperationalError
-            flash(str(e), "danger")
+            flash("Error while processing your last request: " + str(e.args[1]), "danger")
 
     ## else, response for GET request
     return render_template("create_program.html", pageTitle = "Create Program", form = form)
@@ -110,7 +111,7 @@ def updateProgram(programID):
             cur.close()
             flash("Program updated successfully", "success")
         except Exception as e:
-            flash(str(e), "danger")
+            flash("Error while processing your last request: " + str(e.args[1]), "danger")
     else:
         for category in form.errors.values():
             for error in category:
@@ -130,7 +131,7 @@ def deleteProgram(programID):
         cur.close()
         flash("Program deleted successfully", "primary")
     except Exception as e:
-        flash(str(e), "danger")
+        flash("Error while processing your last request: " + str(e.args[1]), "danger")
     return redirect(url_for("getPrograms"))
 
 @app.route("/projects", methods = ["GET", "POST"])
@@ -139,6 +140,7 @@ def getProjects():
     Retrieve projects from database
     """
     form = ProjectForm()
+    updateForm = ProjectUpdateForm()
     if(request.method == "POST" and form.validate_on_submit()):
         if (form.clear.data):
             return redirect(url_for("getProjects"))
@@ -173,7 +175,7 @@ def getProjects():
             column_names = [i[0] for i in cur.description]
             projects = [dict(zip(column_names, entry)) for entry in cur.fetchall()]
             cur.close()
-            return render_template("projects.html", projects = projects, pageTitle = "Projects Page", form = form)
+            return render_template("projects.html", projects = projects, pageTitle = "Projects Page", form = form, updateForm = updateForm)
         except Exception as e:
             abort(500)
             print(e)
@@ -186,16 +188,42 @@ def getProjects():
         column_names = [i[0] for i in cur.description]
         projects = [dict(zip(column_names, entry)) for entry in cur.fetchall()]
         cur.close()
-        return render_template("projects.html", projects = projects, pageTitle = "Projects Page", form = form)
+        return render_template("projects.html", projects = projects, pageTitle = "Projects Page", form = form, updateForm = updateForm)
     except Exception as e:
         abort(500)
         print(e)
+
+@app.route("/projects/update/<int:projectID>", methods = ["POST"])
+def updateProject(projectID):
+    """
+    Update a project in the database, by id
+    """
+    updateForm = ProjectUpdateForm()
+    updateData = updateForm.__dict__
+    if(updateForm.validate_on_submit()):
+        query = "UPDATE project SET title = '{}', description = '{}', start = '{}', end = '{}', \
+        fund = '{}' WHERE proj_id = {};".format(updateData['title'].data, updateData['description'].data, updateData['start'].data, \
+        updateData['end'].data, updateData['fund'].data, projectID)
+        try:
+            cur = db.connection.cursor()
+            cur.execute(query)
+            db.connection.commit()
+            cur.close()
+            flash("Project updated successfully", "success")
+        except Exception as e:
+            flash("Error while processing your last request: " + str(e.args[1]), "danger")
+    else:
+        for category in updateForm.errors.values():
+            for error in category:
+                flash(error, "danger")
+    return redirect(url_for("getProjects"))
 
 @app.route("/projects/researchers/<int:projectID>", methods = ["GET"]) ## "GET" by default
 def getResearchersFromProject(projectID):
     """
     Show researchers
     """
+    updateForm = ResearcherUpdateForm()
     query = f"SELECT * FROM project p INNER JOIN works w on w.proj_id = p.proj_id \
     INNER JOIN researcher r ON r.res_id = w.res_id WHERE p.proj_id = {projectID};"
     try:
@@ -204,7 +232,7 @@ def getResearchersFromProject(projectID):
         column_names = [i[0] for i in cur.description]
         researchers = [dict(zip(column_names, entry)) for entry in cur.fetchall()]
         cur.close()
-        return render_template("researchers.html", researchers = researchers, pageTitle = "Researchers Page")
+        return render_template("researchers.html", researchers = researchers, pageTitle = "Researchers Page", updateForm = updateForm)
     except Exception as e:
         abort(500)
         print(e)
@@ -215,16 +243,40 @@ def getFields():
     Retrieve fields from database
     """
     try:
+        form = FieldForm()
         cur = db.connection.cursor()
         cur.execute("SELECT * FROM research_field;")
         column_names = [i[0] for i in cur.description]
         fields = [dict(zip(column_names, entry)) for entry in cur.fetchall()]
         cur.close()
-        return render_template("fields.html", fields = fields, pageTitle = "Research Fields Page")
+        return render_template("fields.html", fields = fields, pageTitle = "Research Fields Page", form = form)
     except Exception as e:
         ## if the connection to the database fails, return HTTP response 500
         flash(str(e), "danger")
         abort(500)
+
+@app.route("/fields/update/<int:fieldID>", methods = ["POST"])
+def updateField(fieldID):
+    """
+    Update a field in the database, by id
+    """
+    form = FieldForm()
+    updateData = form.__dict__
+    if(form.validate_on_submit()):
+        query = "UPDATE research_field SET field_name = '{}', description = '{}' WHERE field_id = {};".format(updateData['field_name'].data, updateData['description'].data, fieldID)
+        try:
+            cur = db.connection.cursor()
+            cur.execute(query)
+            db.connection.commit()
+            cur.close()
+            flash("Field updated successfully", "success")
+        except Exception as e:
+            flash("Error while processing your last request: " + str(e.args[1]), "danger")
+    else:
+        for category in form.errors.values():
+            for error in category:
+                flash(error, "danger")
+    return redirect(url_for("getFields"))
 
 @app.route("/fields/projects/<int:fieldID>", methods = ["GET"]) ## "GET" by default
 def getProjectsFromField(fieldID):
@@ -247,6 +299,7 @@ def getResearchersFromField(fieldID):
     """
     Show Researchers
     """
+    updateForm = ResearcherUpdateForm()
     query = f"SELECT r.res_id, r.first_name, r.last_name, r.sex, r.date_of_birth \
     FROM research_field rf \
     INNER JOIN proj_field pf ON rf.field_id = pf.field_id \
@@ -260,7 +313,7 @@ def getResearchersFromField(fieldID):
         column_names = [i[0] for i in cur.description]
         researchers = [dict(zip(column_names, entry)) for entry in cur.fetchall()]
         cur.close()
-        return render_template("researchers.html", researchers = researchers, pageTitle = "Researchers Page")
+        return render_template("researchers.html", researchers = researchers, pageTitle = "Researchers Page", updateForm = updateForm)
     except Exception as e:
         abort(500)
         print(e)
@@ -271,10 +324,11 @@ def getInstitutions():
     Retrieve institutions from database
     """
     try:
+        form = InstitutionForm()
         btnPressed=request.args.get('listOfObjects') # argument from button pressed
         if (btnPressed == None):
             query = "SELECT i.ins_id, i.abbreviation, i.name, \
-            CONCAT(i.street_name,' ',i.street_number,', ',i.city,' ',i.zip) AS address \
+            i.street_name, i.street_number, i.city, i.zip \
             FROM institution i;"
         elif (btnPressed == 'pressed_2'):
             query = "SELECT i.ins_id, i.abbreviation, i.name, \
@@ -289,11 +343,36 @@ def getInstitutions():
         column_names = [i[0] for i in cur.description]
         institutions = [dict(zip(column_names, entry)) for entry in cur.fetchall()]
         cur.close()
-        return render_template("institutions.html", institutions = institutions, pageTitle = "Institutions Page")
+        return render_template("institutions.html", institutions = institutions, pageTitle = "Institutions Page", form = form)
     except Exception as e:
         ## if the connection to the database fails, return HTTP response 500
         flash(str(e), "danger")
         abort(500)
+
+@app.route("/institutions/update/<int:institutionID>", methods = ["POST"])
+def updateInstitution(institutionID):
+    """
+    Update a institution in the database, by id
+    """
+    form = InstitutionForm()
+    updateData = form.__dict__
+    if(form.validate_on_submit()):
+        query = "UPDATE institution SET abbreviation = '{}', name = '{}', street_name = '{}', street_number = '{}', \
+        zip = '{}', city = '{}' WHERE ins_id = {};".format(updateData['abbreviation'].data, updateData['name'].data, \
+        updateData['street_name'].data, updateData['street_number'].data, updateData['zip'].data, updateData['city'].data, institutionID)
+        try:
+            cur = db.connection.cursor()
+            cur.execute(query)
+            db.connection.commit()
+            cur.close()
+            flash("Institution updated successfully", "success")
+        except Exception as e:
+            flash("Error while processing your last request: " + str(e.args[1]), "danger")
+    else:
+        for category in form.errors.values():
+            for error in category:
+                flash(error, "danger")
+    return redirect(url_for("getInstitutions"))
 
 @app.route("/researchers")
 def getResearchers():
@@ -301,6 +380,7 @@ def getResearchers():
     Retrieve Researchers from database
     """
     try:
+        updateForm = ResearcherUpdateForm()
         btnPressed=request.args.get('listOfObjects') # argument from button pressed
         if (btnPressed == None):
             query = "SELECT r.res_id, r.first_name, r.last_name, r.sex, r.date_of_birth FROM researcher r;"
@@ -320,11 +400,36 @@ def getResearchers():
         column_names = [i[0] for i in cur.description]
         researchers = [dict(zip(column_names, entry)) for entry in cur.fetchall()]
         cur.close()
-        return render_template("researchers.html", researchers = researchers, pageTitle = "Researchers Page")
+        return render_template("researchers.html", researchers = researchers, pageTitle = "Researchers Page", updateForm = updateForm)
     except Exception as e:
         ## if the connection to the database fails, return HTTP response 500
         flash(str(e), "danger")
         abort(500)
+
+@app.route("/researchers/update/<int:researcherID>", methods = ["POST"])
+def updateResearcher(researcherID):
+    """
+    Update a researcher in the database, by id
+    """
+    updateForm = ResearcherUpdateForm()
+    updateData = updateForm.__dict__
+    if(updateForm.validate_on_submit()):
+        query = "UPDATE researcher SET first_name = '{}', last_name = '{}', sex = '{}', \
+        date_of_birth = '{}' WHERE res_id = {};".format(updateData['first_name'].data, updateData['last_name'].data, \
+        updateData['sex'].data, updateData['date_of_birth'].data, researcherID)
+        try:
+            cur = db.connection.cursor()
+            cur.execute(query)
+            db.connection.commit()
+            cur.close()
+            flash("Researcher updated successfully", "success")
+        except Exception as e:
+            flash("Error while processing your last request: " + str(e.args[1]), "danger")
+    else:
+        for category in updateForm.errors.values():
+            for error in category:
+                flash(error, "danger")
+    return redirect(url_for("getResearchers"))
 
 @app.errorhandler(404)
 def page_not_found(e):

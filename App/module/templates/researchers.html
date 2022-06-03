@@ -49,7 +49,10 @@
                                     {% if "num_of_projects" in researchers[0] %}
                                         <th>Number Of Projects</th>
                                     {% endif %}
-                                    <th></th>
+                                    <!-- check if initial view is displayed -->
+                                    {% if "date_of_birth" in researchers[0] %}
+                                        <th></th>
+                                    {% endif %}
                                 </tr>
                             </thead>
                             <tbody>
@@ -67,13 +70,18 @@
                                         {% if "num_of_projects" in researchers[0] %}
                                             <td> {{ researcher.num_of_projects }} </td>
                                         {% endif %}
-                                        <td>
-                                            <button style = "all: unset; cursor: pointer;" type = "button"
-                                            data-bs-toggle = "modal" data-bs-target = "#deleteModal"
-                                            data-id = "{{ researcher.proj_id }}" onclick = "setModalFieldsDel(this)">
-                                                <i class = "fa fa-trash"></i>
-                                            </button>
-                                        </td>
+                                        {% if "date_of_birth" in researchers[0] %}
+                                            <td>
+                                                <a type="button" onclick="setEditModalFields(this)"
+                                                data-toggle="modal" data-res_id="{{ researcher.res_id }}"
+                                                data-first_name="{{ researcher.first_name }}"  data-last_name= "{{ researcher.last_name }}"
+                                                data-sex= "{{ researcher.sex }}" data-date_of_birth= "{{ researcher.date_of_birth }}"
+                                                data-bs-toggle = "modal"
+                                                data-bs-target="#editModal">
+                                                    <i class="fa fa-edit"></i>
+                                                </a>
+                                            </td>
+                                        {% endif %}
                                     </tr>
                                 {% endfor %}
                             </tbody>
@@ -86,32 +94,93 @@
     </div>
 </div>
 
-<!-- Modal -->
-<div class = "modal fade" id="deleteModal">
-    <div class = "modal-dialog">
-        <div class = "modal-content">
-            <div class = "modal-header">
-                <h5 class = "modal-title" id = "deleteModalLabel">Delete grade</h5>
-                <button type = "button" class = "btn-close" data-bs-dismiss = "modal" aria-label = "Close"></button>
+<!-- Edit modal -->
+<div id="editModal" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header text-center">
+                <h4 class="modal-title w-100">Edit Researcher</h4>
             </div>
-            <div class = "modal-body">
-                Are you sure?
-            </div>
-            <div class = "modal-footer">
-                <button type = "button" class = "btn btn-secondary" data-bs-dismiss = "modal">Close</button>
-                <form id = "modal-form">
-                    <input type = "submit" class = "btn btn-danger" value = "Delete">
+            <div class="modal-body">
+                <form class="form-horizontal" id="modal-form">
+                    {{ updateForm.hidden_tag() }}
+                    <div class="form-group col-sm-3 mb-3 col-centered" style="text-align: center;">
+                        <label for="update_id" class = "form-label">ID</label><br>
+                        <input class = "form-control" type="text" name="id" id="update_id" readonly style="text-align:center;">
+                    </div>
+                    <div class="form-group col-sm-12 mb-3" style="text-align: center;">
+                        {{ updateForm.first_name.label(class = "form-label") }}
+                        <!-- Setting required to false disables the HTML attribute and leaves input validation to the backend -->
+                        {{ updateForm.first_name(class = "form-control", id = "update_first_name", required = False, style="text-align:center;") }}
+                        {% if updateForm.first_name.errors %}
+                        <ul class = "errors">
+                            {% for error in updateForm.first_name.errors %}
+                            <li class = "alert text-danger">{{ error }}</li>
+                            {% endfor %}
+                        </ul>
+                        {% endif %}
+                    </div>
+                    <div class="form-group col-sm-12 mb-3" style="text-align: center;">
+                        {{ updateForm.last_name.label(class = "form-label") }}
+                        <!-- Setting required to false disables the HTML attribute and leaves input validation to the backend -->
+                        {{ updateForm.last_name(class = "form-control", id = "update_last_name", required = False, style="text-align:center;") }}
+                        {% if updateForm.last_name.errors %}
+                        <ul class = "errors">
+                            {% for error in updateForm.last_name.errors %}
+                            <li class = "alert text-danger">{{ error }}</li>
+                            {% endfor %}
+                        </ul>
+                        {% endif %}
+                    </div>
+                    <div class="form-group col-sm-4 mb-3 col-centered" style="text-align: center;">
+                        {{ updateForm.sex.label(class = "form-label") }}
+                        <!-- Setting required to false disables the HTML attribute and leaves input validation to the backend -->
+                        {{ updateForm.sex(class = "form-control", id = "update_sex", required = False, style="text-align:center;") }}
+                        {% if updateForm.sex.errors %}
+                        <ul class = "errors">
+                            {% for error in updateForm.sex.errors %}
+                            <li class = "alert text-danger">{{ error }}</li>
+                            {% endfor %}
+                        </ul>
+                        {% endif %}
+                    </div>
+                    <div class="form-group col-sm-4 mb-3 col-centered" style="text-align: center;">
+                        {{ updateForm.date_of_birth.label(class = "form-label") }}
+                        <!-- Setting required to false disables the HTML attribute and leaves input validation to the backend -->
+                        {{ updateForm.date_of_birth(class = "form-control", id = "update_date_of_birth", required = False) }}
+                        {% if updateForm.date_of_birth.errors %}
+                        <ul class = "errors">
+                            {% for error in updateForm.date_of_birth.errors %}
+                            <li class = "alert text-danger">{{ error }}</li>
+                            {% endfor %}
+                        </ul>
+                        {% endif %}
+                    </div>
                 </form>
             </div>
+            <div class="modal-footer col-centered">
+                {{ updateForm.submit(class = "btn btn btn-success", form = "modal-form", value = "Update") }}
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
         </div>
+
     </div>
 </div>
 
 <script>
-    function setModalFieldsDel(row) {
-        document.getElementById("modal-form").action = "/grades/delete/" + row.getAttribute("data-id");
-        document.getElementById("modal-form").method = "POST";
-    }
 
+    function setEditModalFields(row) {
+        document.getElementById("update_id").value = row.getAttribute("data-res_id");
+        document.getElementById("update_first_name").value = row.getAttribute("data-first_name");
+        document.getElementById("update_last_name").value = row.getAttribute("data-last_name");
+        document.getElementById("update_sex").value = row.getAttribute("data-sex");
+        document.getElementById("update_date_of_birth").value = row.getAttribute("data-date_of_birth");
+        document.getElementById("modal-form").action = "/researchers/update/" + row.getAttribute("data-res_id");
+        document.getElementById("modal-form").method = "POST";
+        // document.getElementById("submit").addEventListener("click", (e) => {e.preventDefault();});
+        // commented line above would prevent the default behavior of the submit button, that is, sending the
+        // form data with a post request to the determined address and subsequently closing the pop-up
+    }
 </script>
 {% endblock content %}
