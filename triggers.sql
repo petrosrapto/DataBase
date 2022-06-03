@@ -143,5 +143,28 @@ SIGNAL SQLSTATE '50009' SET MESSAGE_TEXT = 'Cannot have a project with no resear
 END IF;
 END $$
 
+DELIMITER $$
+DROP TRIGGER IF EXISTS delete_projects_when_you_delete_programs$$
+CREATE TRIGGER delete_projects_when_you_delete_programs
+before delete
+ON program FOR EACH ROW
+BEGIN
+delete from project where prog_id = old.prog_id;
+END $$
+
+
+
+DELIMITER $$
+DROP TRIGGER IF EXISTS delete_projects_when_you_delete_executive$$
+CREATE TRIGGER delete_projects_when_you_delete_executive
+before delete
+ON executive FOR EACH ROW
+BEGIN
+delete from project where ex_id = old.ex_id;
+END $$
+
+
+
+
 
 DELIMITER ;

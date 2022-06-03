@@ -118,7 +118,7 @@ CREATE TABLE researcher (
   res_ins_date DATE NOT NULL,
   PRIMARY KEY (res_id),
   CONSTRAINT fk_res_ins FOREIGN KEY (ins_id)
-    REFERENCES institution (ins_id) ON DELETE RESTRICT ON UPDATE CASCADE
+    REFERENCES institution (ins_id) ON DELETE CASCADE ON UPDATE CASCADE
 )ENGINE=InnoDB AUTO_INCREMENT=310001 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 
@@ -154,7 +154,7 @@ CREATE TABLE project (
     CONSTRAINT con_duration CHECK ((datediff(end, start)/365.25) between 0.99 AND 4.0),
   PRIMARY KEY (proj_id),
   CONSTRAINT fk_proj_ins FOREIGN KEY (ins_id)
-    REFERENCES institution (ins_id) ON DELETE RESTRICT ON UPDATE CASCADE,
+    REFERENCES institution (ins_id) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT fk_proj_prog FOREIGN KEY (prog_id)
     REFERENCES program (prog_id) ON DELETE RESTRICT ON UPDATE CASCADE,
   CONSTRAINT fk_proj_ex FOREIGN KEY (ex_id)
@@ -162,7 +162,7 @@ CREATE TABLE project (
   CONSTRAINT fk_proj_ass FOREIGN KEY (ass_id)
     REFERENCES assessment (ass_id) ON DELETE RESTRICT ON UPDATE CASCADE,
   CONSTRAINT fk_proj_ass_res FOREIGN KEY (ass_res_id)
-    REFERENCES researcher (res_id) ON DELETE RESTRICT ON UPDATE CASCADE,
+    REFERENCES researcher (res_id) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT fk_proj_sup_res FOREIGN KEY (sup_res_id)
     REFERENCES researcher (res_id) ON DELETE RESTRICT ON UPDATE CASCADE
 )ENGINE=InnoDB AUTO_INCREMENT=45001 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
@@ -174,7 +174,7 @@ CREATE TABLE works (
   proj_id INT UNSIGNED NOT NULL,
   PRIMARY KEY (res_id, proj_id),
   CONSTRAINT fk_works_res FOREIGN KEY (res_id)
-    REFERENCES researcher (res_id) ON DELETE RESTRICT ON UPDATE CASCADE,
+    REFERENCES researcher (res_id) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT fk_works_proj FOREIGN KEY (proj_id)
     REFERENCES project (proj_id) ON DELETE CASCADE ON UPDATE CASCADE
 )ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
