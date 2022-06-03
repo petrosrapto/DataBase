@@ -97,23 +97,74 @@ CREATE TRIGGER proj_works_sup_update
 after update
 ON project FOR EACH ROW
 BEGIN
-update works set res_id = new.sup_res_id, proj_id =  new.proj_id where res_id = old.sup_res_id and proj_id = old.proj_id;
+delete from works where res_id = old.sup_res_id and proj_id = old.proj_id;
+delete from works where res_id = new.sup_res_id and proj_id = old.proj_id;  -- do not create duplicates. Duplicates will mess up the process and not let the update go through.
+insert into works (res_id,proj_id) values (new.sup_res_id,new.proj_id);
 END $$
 
 
 DELIMITER $$
-DROP TRIGGER IF EXISTS supervisor_last_to_be_deleted$$
-/* make sure that the supervisor is the last researcher to be deleted */
-CREATE TRIGGER supervisor_last_to_be_deleted
+DROP TRIGGER IF EXISTS supervisor_cannot_be_updated_this_way$$
+/* If the user tries to update the supervisor of a project from the works table then do not allow it.
+  Instead the user must update it by updating the project table.*/
+CREATE TRIGGER supervisor_cannot_be_updated_this_way
+before update
+ON works FOR EACH ROW
+BEGIN
+IF old.res_id = (select sup_res_id from project where proj_id = old.proj_id)  THEN
+SIGNAL SQLSTATE '50007' SET MESSAGE_TEXT = 'Supervisor cannot be updated this way';
+END IF;
+END $$
+
+DELIMITER $$
+DROP TRIGGER IF EXISTS cannot_delete_supervisor$$
+/* Do not allow deletion of supervisor from works table
+   This trigger works ONLY if you try to delete tuples from works one by one
+   Otherwise no changes will go through*/
+CREATE TRIGGER cannot_delete_supervisor
 before delete
 ON works FOR EACH ROW
 BEGIN
-IF (old.res_id = (select sup_res_id from project where proj_id = old.proj_id)) THEN
-IF (select count(*) from works where proj_id = old.proj_id) > 1 THEN
-SIGNAL SQLSTATE '50007' SET MESSAGE_TEXT = 'Project supervisor must be the last researcher to be deleted';
-END IF;
+IF old.res_id = (select sup_res_id from project where proj_id = old.proj_id)  THEN
+SIGNAL SQLSTATE '50008' SET MESSAGE_TEXT = 'Supervisor cannot de deleted.';
 END IF;
 END $$
+
+DELIMITER $$
+DROP TRIGGER IF EXISTS cannot_delete_all_project_fields$$
+/* Do not allow deletion of supervisor from works table
+   This trigger works ONLY if you try to delete tuples from proj_field one by one*/
+CREATE TRIGGER cannot_delete_all_project_fields
+before delete
+ON proj_field FOR EACH ROW
+BEGIN
+IF ((select count(*) from proj_field where proj_id = old.proj_id) = 1) THEN
+SIGNAL SQLSTATE '50009' SET MESSAGE_TEXT = 'Cannot have a project with no research fields';
+END IF;
+END $$
+
+DELIMITER $$
+DROP TRIGGER IF EXISTS delete_projects_when_you_delete_programs$$
+CREATE TRIGGER delete_projects_when_you_delete_programs
+before delete
+ON program FOR EACH ROW
+BEGIN
+delete from project where prog_id = old.prog_id;
+END $$
+
+
+
+DELIMITER $$
+DROP TRIGGER IF EXISTS delete_projects_when_you_delete_executive$$
+CREATE TRIGGER delete_projects_when_you_delete_executive
+before delete
+ON executive FOR EACH ROW
+BEGIN
+delete from project where ex_id = old.ex_id;
+END $$
+
+
+
 
 
 DELIMITER ;
