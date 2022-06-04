@@ -237,21 +237,22 @@
     </div>
 </div>
 
-<!-- Modal -->
+<!--Delete Modal -->
 <div class = "modal fade" id="deleteModal">
     <div class = "modal-dialog">
         <div class = "modal-content">
-            <div class = "modal-header">
-                <h5 class = "modal-title" id = "deleteModalLabel">View Kogios' Dummy Data</h5>
+            <div class = "modal-header text-center">
+                <h5 class = "modal-title w-100" id = "deleteModalLabel">Delete Project</h5>
                 <button type = "button" class = "btn-close" data-bs-dismiss = "modal" aria-label = "Close"></button>
             </div>
-            <div class = "modal-body">
-                You clicked on the trash icon. You can now view all of the Kogios' Dummy Data.
+            <div class = "modal-body" style="text-align: center;">
+                All associated deliverables, assessments and information regarding
+                the project's researchers/research fields will be deleted too. Are you sure?
             </div>
-            <div class = "modal-footer">
+            <div class = "modal-footer col-centered">
                 <button type = "button" class = "btn btn-secondary" data-bs-dismiss = "modal">Close</button>
-                <form id = "modal-form">
-                    <input type = "submit" class = "btn btn-danger" value = "Show">
+                <form id = "delete-modal-form">
+                    <input type = "submit" class = "btn btn-danger" value = "Delete">
                 </form>
             </div>
         </div>
@@ -260,8 +261,8 @@
 
 <script>
     function setModalFieldsDel(row) {
-        document.getElementById("modal-form").action = "/grades/delete/" + row.getAttribute("data-id");
-        document.getElementById("modal-form").method = "POST";
+        document.getElementById("delete-modal-form").action = "/projects/delete/" + row.getAttribute("data-id");
+        document.getElementById("delete-modal-form").method = "POST";
     }
 
     function setModalFieldsRes(row) {

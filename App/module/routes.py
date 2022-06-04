@@ -218,6 +218,22 @@ def updateProject(projectID):
                 flash(error, "danger")
     return redirect(url_for("getProjects"))
 
+@app.route("/projects/delete/<int:projectID>", methods = ["POST"])
+def deleteProject(projectID):
+    """
+    Delete project by id from database
+    """
+    query = f"DELETE FROM project WHERE proj_id = {projectID};"
+    try:
+        cur = db.connection.cursor()
+        cur.execute(query)
+        db.connection.commit()
+        cur.close()
+        flash("Project deleted successfully", "primary")
+    except Exception as e:
+        flash("Error while processing your last request: " + str(e.args[1]), "danger")
+    return redirect(url_for("getProjects"))
+
 @app.route("/projects/researchers/<int:projectID>", methods = ["GET"]) ## "GET" by default
 def getResearchersFromProject(projectID):
     """
@@ -374,6 +390,22 @@ def updateInstitution(institutionID):
                 flash(error, "danger")
     return redirect(url_for("getInstitutions"))
 
+@app.route("/institutions/delete/<int:institutionID>", methods = ["POST"])
+def deleteInstitution(institutionID):
+    """
+    Delete institution by id from database
+    """
+    query = f"DELETE FROM institution WHERE ins_id = {institutionID};"
+    try:
+        cur = db.connection.cursor()
+        cur.execute(query)
+        db.connection.commit()
+        cur.close()
+        flash("Institution deleted successfully", "primary")
+    except Exception as e:
+        flash("Error while processing your last request: " + str(e.args[1]), "danger")
+    return redirect(url_for("getInstitutions"))
+
 @app.route("/researchers")
 def getResearchers():
     """
@@ -429,6 +461,22 @@ def updateResearcher(researcherID):
         for category in updateForm.errors.values():
             for error in category:
                 flash(error, "danger")
+    return redirect(url_for("getResearchers"))
+
+@app.route("/researchers/delete/<int:researcherID>", methods = ["POST"])
+def deleteResearcher(researcherID):
+    """
+    Delete researcher by id from database
+    """
+    query = f"DELETE FROM researcher WHERE res_id = {researcherID};"
+    try:
+        cur = db.connection.cursor()
+        cur.execute(query)
+        db.connection.commit()
+        cur.close()
+        flash("Researcher deleted successfully", "primary")
+    except Exception as e:
+        flash("Error while processing your last request: " + str(e.args[1]), "danger")
     return redirect(url_for("getResearchers"))
 
 @app.errorhandler(404)

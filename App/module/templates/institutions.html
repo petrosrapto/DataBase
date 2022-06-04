@@ -75,6 +75,9 @@
                                     {% if "street_name" in institutions[0] %}
                                         <th></th>
                                     {% endif %}
+                                    {% if "street_name" in institutions[0] %}
+                                        <th></th>
+                                    {% endif %}
                                 </tr>
                             </thead>
                             <tbody>
@@ -121,6 +124,15 @@
                                                 data-bs-target="#editModal">
                                                     <i class="fa fa-edit"></i>
                                                 </a>
+                                            </td>
+                                        {% endif %}
+                                        {% if "street_name" in institutions[0] %}
+                                            <td>
+                                                <button style = "all: unset; cursor: pointer;" type = "button"
+                                                data-bs-toggle = "modal" data-bs-target = "#deleteModal"
+                                                data-id = "{{ institution.ins_id }}" onclick = "setDeleteModalFields(this)">
+                                                    <i class = "fa fa-trash"></i>
+                                                </button>
                                             </td>
                                         {% endif %}
                                     </tr>
@@ -233,6 +245,31 @@
     </div>
 </div>
 
+<!-- Delete modal -->
+<div class = "modal fade" id="deleteModal">
+    <div class = "modal-dialog">
+        <div class = "modal-content">
+            <div class = "modal-header text-center">
+                <h5 class = "modal-title w-100" id = "deleteModalLabel">Delete Institution</h5>
+                <button type = "button" class = "btn-close" data-bs-dismiss = "modal" aria-label = "Close"></button>
+            </div>
+            <div class = "modal-body" style="text-align: center;">
+                Information regarding the institution will be deleted.<br>
+                All associated projects and researchers will be deleted too.<br>
+                Warning: Deleting projects and researchers will trigger cascading deletions in the database!<br>
+                Are you sure?
+            </div>
+            <div class = "modal-footer col-centered">
+                <button type = "button" class = "btn btn-secondary" data-bs-dismiss = "modal">Close</button>
+                <form id = "delete-modal-form">
+                    <input type = "submit" class = "btn btn-danger" value = "Delete">
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
 <script>
   function setEditModalFields(row) {
       document.getElementById("id").value = row.getAttribute("data-ins_id");
@@ -247,6 +284,11 @@
       // document.getElementById("submit").addEventListener("click", (e) => {e.preventDefault();});
       // commented line above would prevent the default behavior of the submit button, that is, sending the
       // form data with a post request to the determined address and subsequently closing the pop-up
+  }
+
+  function setDeleteModalFields(row) {
+      document.getElementById("delete-modal-form").action = "/institutions/delete/" + row.getAttribute("data-id");
+      document.getElementById("delete-modal-form").method = "POST";
   }
 </script>
 
