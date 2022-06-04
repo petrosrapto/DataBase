@@ -119,7 +119,8 @@
                                             data-start= "{{ project.start }}" data-end= "{{ project.end }}"
                                             data-fund= "{{ project.fund }}" data-ins_id= "{{ project.ins_id }}"
                                             data-prog_id= "{{ project.prog_id }}" data-ex_id= "{{ project.ex_id }}"
-                                            data-ass_id= "{{ project.ass_id }}" data-ass_res_id= "{{ project.ass_res_id }}"
+                                            data-ass_id= "{{ project.ass_id }}"
+                                            data-ass_res_id= "{{ project.ass_res_id }}"
                                             data-sup_res_id= "{{ project.sup_res_id }}"
                                             data-bs-toggle = "modal"
                                             data-bs-target="#editModal">
@@ -182,24 +183,24 @@
                         <input class = "form-control" type="text" name="id" id="update_id" readonly style="text-align:center;">
                     </div>
                     <div class="form-group col-sm-12 mb-3" style="text-align: center;">
-                        {{ updateForm.title.label(class = "form-label") }}
+                        {{ updateForm.projectForm_title.label(class = "form-label") }}
                         <!-- Setting required to false disables the HTML attribute and leaves input validation to the backend -->
-                        {{ updateForm.title(class = "form-control", id = "update_title", required = False, style="text-align:center;") }}
-                        {% if updateForm.title.errors %}
+                        {{ updateForm.projectForm_title(class = "form-control", id = "update_title", required = False, style="text-align:center;") }}
+                        {% if updateForm.projectForm_title.errors %}
                         <ul class = "errors">
-                            {% for error in updateForm.title.errors %}
+                            {% for error in updateForm.projectForm_title.errors %}
                             <li class = "alert text-danger">{{ error }}</li>
                             {% endfor %}
                         </ul>
                         {% endif %}
                     </div>
                     <div class="form-group col-sm-12 mb-3" style="text-align: center;">
-                        {{ updateForm.description.label(class = "form-label") }}
+                        {{ updateForm.projectForm_description.label(class = "form-label") }}
                         <!-- Setting required to false disables the HTML attribute and leaves input validation to the backend -->
-                        {{ updateForm.description(class = "form-control", id = "update_description", required = False, style="text-align:center;") }}
-                        {% if updateForm.description.errors %}
+                        {{ updateForm.projectForm_description(class = "form-control", id = "update_description", required = False, style="text-align:center;") }}
+                        {% if updateForm.projectForm_description.errors %}
                         <ul class = "errors">
-                            {% for error in updateForm.description.errors %}
+                            {% for error in updateForm.projectForm_description.errors %}
                             <li class = "alert text-danger">{{ error }}</li>
                             {% endfor %}
                         </ul>
@@ -242,12 +243,12 @@
                         {% endif %}
                     </div>
                     <div class="form-group col-sm-4 mb-3 col-centered" style="text-align: center;">
-                        {{ updateForm.ins_id.label(class = "form-label") }}
+                        {{ updateForm.projectForm_ins_id.label(class = "form-label") }}
                         <!-- Setting required to false disables the HTML attribute and leaves input validation to the backend -->
-                        {{ updateForm.ins_id(class = "form-control", id = "update_ins_id", required = False, style="text-align:center;") }}
-                        {% if updateForm.ins_id.errors %}
+                        {{ updateForm.projectForm_ins_id(class = "form-control", id = "update_ins_id", required = False, style="text-align:center;") }}
+                        {% if updateForm.projectForm_ins_id.errors %}
                         <ul class = "errors">
-                            {% for error in updateForm.ins_id.errors %}
+                            {% for error in updateForm.projectForm_ins_id.errors %}
                             <li class = "alert text-danger">{{ error }}</li>
                             {% endfor %}
                         </ul>
@@ -279,8 +280,7 @@
                     </div>
                     <div class="form-group col-sm-4 mb-3 col-centered" style="text-align: center;">
                         {{ updateForm.ass_id.label(class = "form-label") }}
-                        <!-- Setting required to false disables the HTML attribute and leaves input validation to the backend -->
-                        {{ updateForm.ass_id(class = "form-control", id = "update_ass_id", required = False, style="text-align:center;") }}
+                        <input class = "form-control" type="text" name="ass_id" id="update_ass_id" readonly style="text-align:center;">
                         {% if updateForm.ass_id.errors %}
                         <ul class = "errors">
                             {% for error in updateForm.ass_id.errors %}

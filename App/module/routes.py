@@ -1,7 +1,7 @@
 from flask import Flask, render_template, request, flash, redirect, url_for, abort
 from flask_mysqldb import MySQL
 from module import app, db ## initially created by __init__.py, need to be used here
-from module.forms import ProgramForm, ProjectForm, FieldForm, InstitutionForm, ProjectUpdateForm, ResearcherUpdateForm
+from module.forms import ProgramForm, ProjectForm, FieldForm, InstitutionForm, ProjectUpdateForm, ResearcherUpdateForm, ProjectCreateForm
 
 @app.route("/")
 def index():
@@ -91,26 +91,24 @@ def create():
     except Exception as e: ## OperationalError
         flash("Error while processing your last request: " + str(e.args[1]), "danger")
 
-    projectForm = ProjectUpdateForm()
+    projectForm = ProjectCreateForm()
     try:
         # find choices
         cur = db.connection.cursor()
 
         cur.execute("SELECT ins_id FROM institution ORDER BY ins_id;")
-        projectForm.ins_id.choices = [list(dict(zip(entry, entry)).items())[0] for entry in cur.fetchall()]
+        projectForm.projectForm_ins_id.choices = [(0,"Select Institution's ID"), *[list(dict(zip(entry, entry)).items())[0] for entry in cur.fetchall()]]
 
         cur.execute("SELECT prog_id FROM program ORDER BY prog_id;")
-        projectForm.prog_id.choices = [list(dict(zip(entry, entry)).items())[0] for entry in cur.fetchall()]
+        projectForm.prog_id.choices = [(0,"Select Program's ID"), *[list(dict(zip(entry, entry)).items())[0] for entry in cur.fetchall()]]
 
         cur.execute("SELECT ex_id FROM executive ORDER BY ex_id;")
-        projectForm.ex_id.choices = [list(dict(zip(entry, entry)).items())[0] for entry in cur.fetchall()]
-
-        cur.execute("SELECT ass_id FROM assessment ORDER BY ass_id;")
-        projectForm.ass_id.choices = [list(dict(zip(entry, entry)).items())[0] for entry in cur.fetchall()]
+        projectForm.ex_id.choices = [(0,"Select Executive's ID"), *[list(dict(zip(entry, entry)).items())[0] for entry in cur.fetchall()]]
 
         cur.execute("SELECT res_id FROM researcher ORDER BY res_id;")
         projectForm.ass_res_id.choices = [list(dict(zip(entry, entry)).items())[0] for entry in cur.fetchall()]
-        projectForm.sup_res_id.choices = projectForm.ass_res_id.choices
+        projectForm.sup_res_id.choices = [(0,"Select supervisor's ID"), *projectForm.ass_res_id.choices]
+        projectForm.ass_res_id.choices = [(0,"Select assessor's ID"), *projectForm.ass_res_id.choices]
 
         cur.close()
     except Exception as e: ## OperationalError
@@ -175,19 +173,29 @@ def create():
 
     if(request.method == "POST" and projectForm.validate_on_submit()):
         newProject = projectForm.__dict__
-        query = "INSERT INTO project(title, description, start, end, fund, ins_id, prog_id, ex_id, ass_id, ass_res_id, sup_res_id) VALUES ('{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}');\
-        ".format(newProject['title'].data, newProject['description'].data, newProject['start'].data, newProject['end'].data, \
-        newProject['fund'].data, newProject['ins_id'].data, newProject['prog_id'].data, newProject['ex_id'].data, newProject['ass_id'].data, \
-        newProject['ass_res_id'].data, newProject['sup_res_id'].data)
+        query1 = "INSERT INTO assessment(date, grade) VALUES ('{}', '{}');\
+        ".format(newProject['ass_date'].data, newProject['ass_grade'].data)
+        query2 = "SELECT LAST_INSERT_ID();"
         try:
             cur = db.connection.cursor()
-            cur.execute(query)
+            cur.execute(query1)
+            db.connection.commit()
+            cur.execute(query2)
+            assID = cur.fetchall()
+
+            query3 = "INSERT INTO project(title, description, start, end, fund, ins_id, prog_id, ex_id, ass_id, ass_res_id, sup_res_id) VALUES ('{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}');\
+            ".format(newProject['projectForm_title'].data, newProject['projectForm_description'].data, newProject['start'].data, newProject['end'].data, \
+            newProject['fund'].data, newProject['projectForm_ins_id'].data, newProject['prog_id'].data, newProject['ex_id'].data, assID[0][0], \
+            newProject['ass_res_id'].data, newProject['sup_res_id'].data)
+
+            cur.execute(query3)
             db.connection.commit()
             cur.close()
             flash("Project inserted successfully", "success")
             return redirect(url_for("index"))
         except Exception as e: ## OperationalError
             flash("Error while processing your last request: " + str(e.args[1]), "danger")
+            return redirect(url_for("index"))
 
     ## else, response for GET request
     return render_template("create.html", pageTitle = "Create Page", programForm = programForm, fieldForm = fieldForm, institutionForm = institutionForm, researcherForm = researcherForm, projectForm = projectForm)
@@ -242,7 +250,7 @@ def getProjects():
     cur = db.connection.cursor()
 
     cur.execute("SELECT ins_id FROM institution ORDER BY ins_id;")
-    updateForm.ins_id.choices = [list(dict(zip(entry, entry)).items())[0] for entry in cur.fetchall()]
+    updateForm.projectForm_ins_id.choices = [list(dict(zip(entry, entry)).items())[0] for entry in cur.fetchall()]
 
     cur.execute("SELECT prog_id FROM program ORDER BY prog_id;")
     updateForm.prog_id.choices = [list(dict(zip(entry, entry)).items())[0] for entry in cur.fetchall()]
@@ -322,7 +330,7 @@ def updateProject(projectID):
         cur = db.connection.cursor()
 
         cur.execute("SELECT ins_id FROM institution ORDER BY ins_id;")
-        updateForm.ins_id.choices = [list(dict(zip(entry, entry)).items())[0] for entry in cur.fetchall()]
+        updateForm.projectForm_ins_id.choices = [list(dict(zip(entry, entry)).items())[0] for entry in cur.fetchall()]
 
         cur.execute("SELECT prog_id FROM program ORDER BY prog_id;")
         updateForm.prog_id.choices = [list(dict(zip(entry, entry)).items())[0] for entry in cur.fetchall()]
@@ -345,8 +353,8 @@ def updateProject(projectID):
     if(updateForm.validate_on_submit()):
         query = "UPDATE project SET title = '{}', description = '{}', start = '{}', end = '{}', \
         fund = '{}', ins_id = '{}', prog_id = '{}', ex_id = '{}', ass_id = '{}', ass_res_id = '{}', \
-        sup_res_id = '{}' WHERE proj_id = {};".format(updateData['title'].data, updateData['description'].data, updateData['start'].data, \
-        updateData['end'].data, updateData['fund'].data, updateData['ins_id'].data, updateData['prog_id'].data, \
+        sup_res_id = '{}' WHERE proj_id = {};".format(updateData['projectForm_title'].data, updateData['projectForm_description'].data, updateData['start'].data, \
+        updateData['end'].data, updateData['fund'].data, updateData['projectForm_ins_id'].data, updateData['prog_id'].data, \
         updateData['ex_id'].data, updateData['ass_id'].data, updateData['ass_res_id'].data, updateData['sup_res_id'].data, projectID)
         try:
             cur = db.connection.cursor()
@@ -384,15 +392,19 @@ def getResearchersFromProject(projectID):
     Show researchers
     """
     updateForm = ResearcherUpdateForm()
-    query = f"SELECT * FROM project p INNER JOIN works w on w.proj_id = p.proj_id \
-    INNER JOIN researcher r ON r.res_id = w.res_id WHERE p.proj_id = {projectID};"
+    query = f"SELECT DISTINCT * FROM project p INNER JOIN works w on w.proj_id = p.proj_id \
+    INNER JOIN researcher r ON r.res_id = w.res_id WHERE p.proj_id = {projectID} \
+    ORDER BY r.res_id;"
     try:
+        """
         cur = db.connection.cursor()
         cur.execute(query)
         column_names = [i[0] for i in cur.description]
         researchers = [dict(zip(column_names, entry)) for entry in cur.fetchall()]
         cur.close()
         return render_template("researchers.html", researchers = researchers, pageTitle = "Researchers Page", updateForm = updateForm)
+        """
+        return redirect(url_for('getResearchers', query=query))
     except Exception as e:
         abort(500)
         print(e)
@@ -443,11 +455,13 @@ def getProjectsFromField(fieldID):
     """
     Show Projects
     """
-    query = f"SELECT p.proj_id, p.title, p.description, p.start, p.end, p.fund \
+    query = f"SELECT DISTINCT p.proj_id, p.title, p.description, p.start, p.end, p.fund, \
+    p.ins_id, p.prog_id, p.ex_id, p.ass_id, p.ass_res_id, p.sup_res_id \
     FROM research_field rf \
     INNER JOIN proj_field pf ON rf.field_id = pf.field_id \
     INNER JOIN project p ON pf.proj_id = p.proj_id \
-    WHERE rf.field_id = {fieldID} AND p.start <= current_date()  AND p.end >= current_date();"
+    WHERE rf.field_id = {fieldID} AND p.start <= current_date()  AND p.end >= current_date() \
+    ORDER BY p.proj_id;"
     try:
         return redirect(url_for('getProjects', listOfObjects=query))
     except Exception as e:
@@ -460,20 +474,25 @@ def getResearchersFromField(fieldID):
     Show Researchers
     """
     updateForm = ResearcherUpdateForm()
-    query = f"SELECT r.res_id, r.first_name, r.last_name, r.sex, r.date_of_birth \
+    query = f"SELECT DISTINCT r.res_id, r.first_name, r.last_name, r.sex, r.date_of_birth, \
+    r.ins_id, r.res_ins_date \
     FROM research_field rf \
     INNER JOIN proj_field pf ON rf.field_id = pf.field_id \
     INNER JOIN project p ON pf.proj_id = p.proj_id \
     INNER JOIN works w ON p.proj_id = w.proj_id \
     INNER JOIN researcher r ON w.res_id = r.res_id \
-    WHERE rf.field_id = {fieldID} AND p.start <= current_date() AND p.end >= DATE_SUB(current_date(), INTERVAL 1 YEAR);"
+    WHERE rf.field_id = {fieldID} AND p.start <= current_date() AND p.end >= DATE_SUB(current_date(), INTERVAL 1 YEAR) \
+    ORDER BY r.res_id;"
     try:
+        """
         cur = db.connection.cursor()
         cur.execute(query)
         column_names = [i[0] for i in cur.description]
         researchers = [dict(zip(column_names, entry)) for entry in cur.fetchall()]
         cur.close()
         return render_template("researchers.html", researchers = researchers, pageTitle = "Researchers Page", updateForm = updateForm)
+        """
+        return redirect(url_for('getResearchers', query=query))
     except Exception as e:
         abort(500)
         print(e)
@@ -557,8 +576,20 @@ def getResearchers():
     """
     try:
         updateForm = ResearcherUpdateForm()
+        try:
+            # find choices
+            query = "SELECT ins_id FROM institution ORDER BY ins_id;"
+            cur = db.connection.cursor()
+            cur.execute(query)
+            updateForm.ins_id.choices = [list(dict(zip(entry, entry)).items())[0] for entry in cur.fetchall()]
+            cur.close()
+        except Exception as e:
+            flash("Error while processing your last request: " + str(e.args[1]), "danger")
         btnPressed=request.args.get('listOfObjects') # argument from button pressed
-        if (btnPressed == None):
+        queryArgument = request.args.get('query')
+        if (queryArgument != None):
+            query = queryArgument
+        elif (btnPressed == None):
             # find choices
             query = "SELECT ins_id FROM institution ORDER BY ins_id;"
             cur = db.connection.cursor()
@@ -594,12 +625,15 @@ def updateResearcher(researcherID):
     Update a researcher in the database, by id
     """
     updateForm = ResearcherUpdateForm()
-    # find choices
-    query = "SELECT ins_id FROM institution ORDER BY ins_id;"
-    cur = db.connection.cursor()
-    cur.execute(query)
-    updateForm.ins_id.choices = [list(dict(zip(entry, entry)).items())[0] for entry in cur.fetchall()]
-    cur.close()
+    try:
+        # find choices
+        query = "SELECT ins_id FROM institution ORDER BY ins_id;"
+        cur = db.connection.cursor()
+        cur.execute(query)
+        updateForm.ins_id.choices = [list(dict(zip(entry, entry)).items())[0] for entry in cur.fetchall()]
+        cur.close()
+    except Exception as e:
+        flash("Error while processing your last request: " + str(e.args[1]), "danger")
     updateData = updateForm.__dict__
     if(updateForm.validate_on_submit()):
         query = "UPDATE researcher SET first_name = '{}', last_name = '{}', sex = '{}', \
