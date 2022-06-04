@@ -91,6 +91,31 @@ def create():
     except Exception as e: ## OperationalError
         flash("Error while processing your last request: " + str(e.args[1]), "danger")
 
+    projectForm = ProjectUpdateForm()
+    try:
+        # find choices
+        cur = db.connection.cursor()
+
+        cur.execute("SELECT ins_id FROM institution ORDER BY ins_id;")
+        projectForm.ins_id.choices = [list(dict(zip(entry, entry)).items())[0] for entry in cur.fetchall()]
+
+        cur.execute("SELECT prog_id FROM program ORDER BY prog_id;")
+        projectForm.prog_id.choices = [list(dict(zip(entry, entry)).items())[0] for entry in cur.fetchall()]
+
+        cur.execute("SELECT ex_id FROM executive ORDER BY ex_id;")
+        projectForm.ex_id.choices = [list(dict(zip(entry, entry)).items())[0] for entry in cur.fetchall()]
+
+        cur.execute("SELECT ass_id FROM assessment ORDER BY ass_id;")
+        projectForm.ass_id.choices = [list(dict(zip(entry, entry)).items())[0] for entry in cur.fetchall()]
+
+        cur.execute("SELECT res_id FROM researcher ORDER BY res_id;")
+        projectForm.ass_res_id.choices = [list(dict(zip(entry, entry)).items())[0] for entry in cur.fetchall()]
+        projectForm.sup_res_id.choices = projectForm.ass_res_id.choices
+
+        cur.close()
+    except Exception as e: ## OperationalError
+        flash("Error while processing your last request: " + str(e.args[1]), "danger")
+
     ## when the form is submitted
     if(request.method == "POST" and programForm.validate_on_submit()):
         newProgram = programForm.__dict__
@@ -148,8 +173,24 @@ def create():
         except Exception as e: ## OperationalError
             flash("Error while processing your last request: " + str(e.args[1]), "danger")
 
+    if(request.method == "POST" and projectForm.validate_on_submit()):
+        newProject = projectForm.__dict__
+        query = "INSERT INTO project(title, description, start, end, fund, ins_id, prog_id, ex_id, ass_id, ass_res_id, sup_res_id) VALUES ('{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}');\
+        ".format(newProject['title'].data, newProject['description'].data, newProject['start'].data, newProject['end'].data, \
+        newProject['fund'].data, newProject['ins_id'].data, newProject['prog_id'].data, newProject['ex_id'].data, newProject['ass_id'].data, \
+        newProject['ass_res_id'].data, newProject['sup_res_id'].data)
+        try:
+            cur = db.connection.cursor()
+            cur.execute(query)
+            db.connection.commit()
+            cur.close()
+            flash("Project inserted successfully", "success")
+            return redirect(url_for("index"))
+        except Exception as e: ## OperationalError
+            flash("Error while processing your last request: " + str(e.args[1]), "danger")
+
     ## else, response for GET request
-    return render_template("create.html", pageTitle = "Create Page", programForm = programForm, fieldForm = fieldForm, institutionForm = institutionForm, researcherForm = researcherForm)
+    return render_template("create.html", pageTitle = "Create Page", programForm = programForm, fieldForm = fieldForm, institutionForm = institutionForm, researcherForm = researcherForm, projectForm = projectForm)
 
 @app.route("/programs/update/<int:programID>", methods = ["POST"])
 def updateProgram(programID):
@@ -197,6 +238,27 @@ def getProjects():
     """
     form = ProjectForm()
     updateForm = ProjectUpdateForm()
+    # find choices
+    cur = db.connection.cursor()
+
+    cur.execute("SELECT ins_id FROM institution ORDER BY ins_id;")
+    updateForm.ins_id.choices = [list(dict(zip(entry, entry)).items())[0] for entry in cur.fetchall()]
+
+    cur.execute("SELECT prog_id FROM program ORDER BY prog_id;")
+    updateForm.prog_id.choices = [list(dict(zip(entry, entry)).items())[0] for entry in cur.fetchall()]
+
+    cur.execute("SELECT ex_id FROM executive ORDER BY ex_id;")
+    updateForm.ex_id.choices = [list(dict(zip(entry, entry)).items())[0] for entry in cur.fetchall()]
+
+    cur.execute("SELECT ass_id FROM assessment ORDER BY ass_id;")
+    updateForm.ass_id.choices = [list(dict(zip(entry, entry)).items())[0] for entry in cur.fetchall()]
+
+    cur.execute("SELECT res_id FROM researcher ORDER BY res_id;")
+    updateForm.ass_res_id.choices = [list(dict(zip(entry, entry)).items())[0] for entry in cur.fetchall()]
+    updateForm.sup_res_id.choices = updateForm.ass_res_id.choices
+
+    cur.close()
+
     if(request.method == "POST" and form.validate_on_submit()):
         if (form.clear.data):
             return redirect(url_for("getProjects"))
@@ -255,11 +317,37 @@ def updateProject(projectID):
     Update a project in the database, by id
     """
     updateForm = ProjectUpdateForm()
+    try:
+        # find choices
+        cur = db.connection.cursor()
+
+        cur.execute("SELECT ins_id FROM institution ORDER BY ins_id;")
+        updateForm.ins_id.choices = [list(dict(zip(entry, entry)).items())[0] for entry in cur.fetchall()]
+
+        cur.execute("SELECT prog_id FROM program ORDER BY prog_id;")
+        updateForm.prog_id.choices = [list(dict(zip(entry, entry)).items())[0] for entry in cur.fetchall()]
+
+        cur.execute("SELECT ex_id FROM executive ORDER BY ex_id;")
+        updateForm.ex_id.choices = [list(dict(zip(entry, entry)).items())[0] for entry in cur.fetchall()]
+
+        cur.execute("SELECT ass_id FROM assessment ORDER BY ass_id;")
+        updateForm.ass_id.choices = [list(dict(zip(entry, entry)).items())[0] for entry in cur.fetchall()]
+
+        cur.execute("SELECT res_id FROM researcher ORDER BY res_id;")
+        updateForm.ass_res_id.choices = [list(dict(zip(entry, entry)).items())[0] for entry in cur.fetchall()]
+        updateForm.sup_res_id.choices = updateForm.ass_res_id.choices
+
+        cur.close()
+    except Exception as e: ## OperationalError
+        flash("Error while processing your last request: " + str(e.args[1]), "danger")
+
     updateData = updateForm.__dict__
     if(updateForm.validate_on_submit()):
         query = "UPDATE project SET title = '{}', description = '{}', start = '{}', end = '{}', \
-        fund = '{}' WHERE proj_id = {};".format(updateData['title'].data, updateData['description'].data, updateData['start'].data, \
-        updateData['end'].data, updateData['fund'].data, projectID)
+        fund = '{}', ins_id = '{}', prog_id = '{}', ex_id = '{}', ass_id = '{}', ass_res_id = '{}', \
+        sup_res_id = '{}' WHERE proj_id = {};".format(updateData['title'].data, updateData['description'].data, updateData['start'].data, \
+        updateData['end'].data, updateData['fund'].data, updateData['ins_id'].data, updateData['prog_id'].data, \
+        updateData['ex_id'].data, updateData['ass_id'].data, updateData['ass_res_id'].data, updateData['sup_res_id'].data, projectID)
         try:
             cur = db.connection.cursor()
             cur.execute(query)

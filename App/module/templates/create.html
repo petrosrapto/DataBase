@@ -254,6 +254,81 @@
             </div>
         </div>
     </div>
+    <div class="row" id="row">
+        <div class="modal-content">
+            <div class="modal-header text-center">
+                <h4 class="modal-title w-100">Create Project</h4>
+            </div>
+            <div class="modal-body col-md-5 col-centered">
+                <form class="form-horizontal" id="project-form" method="POST">
+                    {{ projectForm.hidden_tag() }}
+                    <div class="form-group col-sm-12 mb-3" style="text-align: center;">
+                        {{ projectForm.title.label(class = "form-label") }}
+                        <!-- Setting required to false disables the HTML attribute and leaves input validation to the backend -->
+                        {{ projectForm.title(class = "form-control", placeholder="Enter Title", id = "title", required = False, style="text-align:center;") }}
+                        {% if projectForm.title.errors %}
+                        <ul class = "errors">
+                            {% for error in projectForm.title.errors %}
+                            <li class = "alert text-danger">{{ error }}</li>
+                            {% endfor %}
+                        </ul>
+                        {% endif %}
+                    </div>
+                    <div class="form-group col-sm-12 mb-3" style="text-align: center;">
+                        {{ projectForm.description.label(class = "form-label") }}
+                        <!-- Setting required to false disables the HTML attribute and leaves input validation to the backend -->
+                        {{ projectForm.description(class = "form-control", placeholder="Enter Description", id = "description", required = False, style="text-align:center;") }}
+                        {% if projectForm.description.errors %}
+                        <ul class = "errors">
+                            {% for error in projectForm.description.errors %}
+                            <li class = "alert text-danger">{{ error }}</li>
+                            {% endfor %}
+                        </ul>
+                        {% endif %}
+                    </div>
+                    <div class="form-group col-sm-12 mb-3" style="text-align: center;">
+                        {{ projectForm.start.label(class = "form-label") }}
+                        <!-- Setting required to false disables the HTML attribute and leaves input validation to the backend -->
+                        {{ projectForm.start(class = "form-control", placeholder="Select Date", id = "start", required = False, style="text-align:center;") }}
+                        {% if projectForm.start.errors %}
+                        <ul class = "errors">
+                            {% for error in projectForm.start.errors %}
+                            <li class = "alert text-danger">{{ error }}</li>
+                            {% endfor %}
+                        </ul>
+                        {% endif %}
+                    </div>
+                    <div class="form-group col-sm-12 mb-3" style="text-align: center;">
+                        {{ projectForm.end.label(class = "form-label") }}
+                        <!-- Setting required to false disables the HTML attribute and leaves input validation to the backend -->
+                        {{ projectForm.end(class = "form-control", placeholder="Enter Date", id = "end", required = False, style="text-align:center;") }}
+                        {% if projectForm.end.errors %}
+                        <ul class = "errors">
+                            {% for error in projectForm.end.errors %}
+                            <li class = "alert text-danger">{{ error }}</li>
+                            {% endfor %}
+                        </ul>
+                        {% endif %}
+                    </div>
+                    <div class="form-group col-sm-12 mb-3" style="text-align: center;">
+                        {{ projectForm.fund.label(class = "form-label") }}
+                        <!-- Setting required to false disables the HTML attribute and leaves input validation to the backend -->
+                        {{ projectForm.fund(class = "form-control", placeholder="Select Fund", id = "fund", required = False, style="text-align:center;") }}
+                        {% if projectForm.fund.errors %}
+                        <ul class = "errors">
+                            {% for error in projectForm.fund.errors %}
+                            <li class = "alert text-danger">{{ error }}</li>
+                            {% endfor %}
+                        </ul>
+                        {% endif %}
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer col-centered">
+                {{ projectForm.submit(class = "btn btn btn-success", form = "project-form", value = "Create") }}
+            </div>
+        </div>
+    </div>
     <div class="row" id="row"></div>
 </div>
 {% endblock content %}

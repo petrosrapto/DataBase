@@ -79,6 +79,12 @@
                                     <th>Start Date</th>
                                     <th>End Date</th>
                                     <th>Fund Amount</th>
+                                    <th>Institution<br>(ID)</th>
+                                    <th>Program<br>(ID)</th>
+                                    <th>Executive<br>(ID)</th>
+                                    <th>Assessment (ID)</th>
+                                    <th>Assessor<br>(ID)</th>
+                                    <th>Supervisor<br>(ID)</th>
                                     <th></th>
                                     <th></th>
                                     <th></th>
@@ -93,6 +99,12 @@
                                         <td class="text-nowrap"> {{ project.start }} </td>
                                         <td class="text-nowrap"> {{ project.end }} </td>
                                         <td> {{ project.fund }} </td>
+                                        <td> {{ project.ins_id }} </td>
+                                        <td> {{ project.prog_id }} </td>
+                                        <td> {{ project.ex_id }} </td>
+                                        <td> {{ project.ass_id }} </td>
+                                        <td> {{ project.ass_res_id }} </td>
+                                        <td> {{ project.sup_res_id }} </td>
                                         <td>
                                             <button style = "all: unset; cursor: pointer;" type = "button"
                                             data-bs-toggle = "modal" data-bs-target = "#resModal"
@@ -105,7 +117,10 @@
                                             data-toggle="modal" data-proj_id="{{ project.proj_id }}"
                                             data-title="{{ project.title }}"  data-description= "{{ project.description }}"
                                             data-start= "{{ project.start }}" data-end= "{{ project.end }}"
-                                            data-fund= "{{ project.fund }}"
+                                            data-fund= "{{ project.fund }}" data-ins_id= "{{ project.ins_id }}"
+                                            data-prog_id= "{{ project.prog_id }}" data-ex_id= "{{ project.ex_id }}"
+                                            data-ass_id= "{{ project.ass_id }}" data-ass_res_id= "{{ project.ass_res_id }}"
+                                            data-sup_res_id= "{{ project.sup_res_id }}"
                                             data-bs-toggle = "modal"
                                             data-bs-target="#editModal">
                                                 <i class="fa fa-edit"></i>
@@ -226,6 +241,78 @@
                         </ul>
                         {% endif %}
                     </div>
+                    <div class="form-group col-sm-4 mb-3 col-centered" style="text-align: center;">
+                        {{ updateForm.ins_id.label(class = "form-label") }}
+                        <!-- Setting required to false disables the HTML attribute and leaves input validation to the backend -->
+                        {{ updateForm.ins_id(class = "form-control", id = "update_ins_id", required = False, style="text-align:center;") }}
+                        {% if updateForm.ins_id.errors %}
+                        <ul class = "errors">
+                            {% for error in updateForm.ins_id.errors %}
+                            <li class = "alert text-danger">{{ error }}</li>
+                            {% endfor %}
+                        </ul>
+                        {% endif %}
+                    </div>
+                    <div class="form-group col-sm-4 mb-3 col-centered" style="text-align: center;">
+                        {{ updateForm.prog_id.label(class = "form-label") }}
+                        <!-- Setting required to false disables the HTML attribute and leaves input validation to the backend -->
+                        {{ updateForm.prog_id(class = "form-control", id = "update_prog_id", required = False, style="text-align:center;") }}
+                        {% if updateForm.prog_id.errors %}
+                        <ul class = "errors">
+                            {% for error in updateForm.prog_id.errors %}
+                            <li class = "alert text-danger">{{ error }}</li>
+                            {% endfor %}
+                        </ul>
+                        {% endif %}
+                    </div>
+                    <div class="form-group col-sm-4 mb-3 col-centered" style="text-align: center;">
+                        {{ updateForm.ex_id.label(class = "form-label") }}
+                        <!-- Setting required to false disables the HTML attribute and leaves input validation to the backend -->
+                        {{ updateForm.ex_id(class = "form-control", id = "update_ex_id", required = False, style="text-align:center;") }}
+                        {% if updateForm.ex_id.errors %}
+                        <ul class = "errors">
+                            {% for error in updateForm.ex_id.errors %}
+                            <li class = "alert text-danger">{{ error }}</li>
+                            {% endfor %}
+                        </ul>
+                        {% endif %}
+                    </div>
+                    <div class="form-group col-sm-4 mb-3 col-centered" style="text-align: center;">
+                        {{ updateForm.ass_id.label(class = "form-label") }}
+                        <!-- Setting required to false disables the HTML attribute and leaves input validation to the backend -->
+                        {{ updateForm.ass_id(class = "form-control", id = "update_ass_id", required = False, style="text-align:center;") }}
+                        {% if updateForm.ass_id.errors %}
+                        <ul class = "errors">
+                            {% for error in updateForm.ass_id.errors %}
+                            <li class = "alert text-danger">{{ error }}</li>
+                            {% endfor %}
+                        </ul>
+                        {% endif %}
+                    </div>
+                    <div class="form-group col-sm-4 mb-3 col-centered" style="text-align: center;">
+                        {{ updateForm.ass_res_id.label(class = "form-label") }}
+                        <!-- Setting required to false disables the HTML attribute and leaves input validation to the backend -->
+                        {{ updateForm.ass_res_id(class = "form-control", id = "update_ass_res_id", required = False, style="text-align:center;") }}
+                        {% if updateForm.ass_res_id.errors %}
+                        <ul class = "errors">
+                            {% for error in updateForm.ass_res_id.errors %}
+                            <li class = "alert text-danger">{{ error }}</li>
+                            {% endfor %}
+                        </ul>
+                        {% endif %}
+                    </div>
+                    <div class="form-group col-sm-4 mb-3 col-centered" style="text-align: center;">
+                        {{ updateForm.sup_res_id.label(class = "form-label") }}
+                        <!-- Setting required to false disables the HTML attribute and leaves input validation to the backend -->
+                        {{ updateForm.sup_res_id(class = "form-control", id = "update_sup_res_id", required = False, style="text-align:center;") }}
+                        {% if updateForm.sup_res_id.errors %}
+                        <ul class = "errors">
+                            {% for error in updateForm.sup_res_id.errors %}
+                            <li class = "alert text-danger">{{ error }}</li>
+                            {% endfor %}
+                        </ul>
+                        {% endif %}
+                    </div>
                 </form>
             </div>
             <div class="modal-footer col-centered">
@@ -277,6 +364,12 @@
         document.getElementById("update_start").value = row.getAttribute("data-start");
         document.getElementById("update_end").value = row.getAttribute("data-end");
         document.getElementById("update_fund").value = row.getAttribute("data-fund");
+        document.getElementById("update_ins_id").value = row.getAttribute("data-ins_id");
+        document.getElementById("update_prog_id").value = row.getAttribute("data-prog_id");
+        document.getElementById("update_ex_id").value = row.getAttribute("data-ex_id");
+        document.getElementById("update_ass_id").value = row.getAttribute("data-ass_id");
+        document.getElementById("update_ass_res_id").value = row.getAttribute("data-ass_res_id");
+        document.getElementById("update_sup_res_id").value = row.getAttribute("data-sup_res_id");
         document.getElementById("modal-form").action = "/projects/update/" + row.getAttribute("data-proj_id");
         document.getElementById("modal-form").method = "POST";
         // document.getElementById("submit").addEventListener("click", (e) => {e.preventDefault();});
