@@ -46,6 +46,12 @@
                                     {% if "date_of_birth" in researchers[0] %}
                                         <th>Date of Birth</th>
                                     {% endif %}
+                                    {% if "ins_id" in researchers[0] %}
+                                        <th>Works for<br>Institution (ID)</th>
+                                    {% endif %}
+                                    {% if "res_ins_date" in researchers[0] %}
+                                        <th>Since</th>
+                                    {% endif %}
                                     {% if "num_of_projects" in researchers[0] %}
                                         <th>Number Of Projects</th>
                                     {% endif %}
@@ -70,6 +76,12 @@
                                         {% if "date_of_birth" in researchers[0] %}
                                             <td> {{ researcher.date_of_birth }} </td>
                                         {% endif %}
+                                        {% if "ins_id" in researchers[0] %}
+                                            <td> {{ researcher.ins_id }} </td>
+                                        {% endif %}
+                                        {% if "res_ins_date" in researchers[0] %}
+                                            <td> {{ researcher.res_ins_date }} </td>
+                                        {% endif %}
                                         {% if "num_of_projects" in researchers[0] %}
                                             <td> {{ researcher.num_of_projects }} </td>
                                         {% endif %}
@@ -79,7 +91,7 @@
                                                 data-toggle="modal" data-res_id="{{ researcher.res_id }}"
                                                 data-first_name="{{ researcher.first_name }}"  data-last_name= "{{ researcher.last_name }}"
                                                 data-sex= "{{ researcher.sex }}" data-date_of_birth= "{{ researcher.date_of_birth }}"
-                                                data-bs-toggle = "modal"
+                                                data-ins_id= "{{ researcher.ins_id }}" data-res_ins_date= "{{ researcher.res_ins_date }}" data-bs-toggle = "modal"
                                                 data-bs-target="#editModal">
                                                     <i class="fa fa-edit"></i>
                                                 </a>
@@ -169,6 +181,30 @@
                         </ul>
                         {% endif %}
                     </div>
+                    <div class="form-group col-sm-4 mb-3 col-centered" name = "ins_id" style="text-align: center;">
+                        {{ updateForm.ins_id.label(class = "form-label") }}
+                        <!-- Setting required to false disables the HTML attribute and leaves input validation to the backend -->
+                        {{ updateForm.ins_id(class = "form-control", id = "update_ins_id", required = False, style="text-align:center;") }}
+                        {% if updateForm.ins_id.errors %}
+                        <ul class = "errors">
+                            {% for error in updateForm.ins_id.errors %}
+                            <li class = "alert text-danger">{{ error }}</li>
+                            {% endfor %}
+                        </ul>
+                        {% endif %}
+                    </div>
+                    <div class="form-group col-sm-4 mb-3 col-centered" style="text-align: center;">
+                        {{ updateForm.res_ins_date.label(class = "form-label") }}
+                        <!-- Setting required to false disables the HTML attribute and leaves input validation to the backend -->
+                        {{ updateForm.res_ins_date(class = "form-control", id = "update_res_ins_date", required = False, style="text-align:center;") }}
+                        {% if updateForm.res_ins_date.errors %}
+                        <ul class = "errors">
+                            {% for error in updateForm.res_ins_date.errors %}
+                            <li class = "alert text-danger">{{ error }}</li>
+                            {% endfor %}
+                        </ul>
+                        {% endif %}
+                    </div>
                 </form>
             </div>
             <div class="modal-footer col-centered">
@@ -210,6 +246,8 @@
         document.getElementById("update_last_name").value = row.getAttribute("data-last_name");
         document.getElementById("update_sex").value = row.getAttribute("data-sex");
         document.getElementById("update_date_of_birth").value = row.getAttribute("data-date_of_birth");
+        document.getElementById("update_ins_id").value = row.getAttribute("data-ins_id");
+        document.getElementById("update_res_ins_date").value = row.getAttribute("data-res_ins_date");
         document.getElementById("modal-form").action = "/researchers/update/" + row.getAttribute("data-res_id");
         document.getElementById("modal-form").method = "POST";
         // document.getElementById("submit").addEventListener("click", (e) => {e.preventDefault();});

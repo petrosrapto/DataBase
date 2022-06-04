@@ -72,15 +72,28 @@ def getPrograms():
         flash(str(e), "danger")
         abort(500)
 
-@app.route("/programs/create", methods = ["GET", "POST"]) ## "GET" by default
-def createProgram():
+@app.route("/create", methods = ["GET", "POST"]) ## "GET" by default
+def create():
     """
-    Create new program in the database
+    Create new entities in the database
     """
-    form = ProgramForm()
+    programForm = ProgramForm()
+    fieldForm = FieldForm()
+    institutionForm = InstitutionForm()
+    researcherForm = ResearcherUpdateForm()
+    # find choices
+    try:
+        query = "SELECT ins_id FROM institution ORDER BY ins_id;"
+        cur = db.connection.cursor()
+        cur.execute(query)
+        researcherForm.ins_id.choices = [(0,"Select Institution's ID"), *[list(dict(zip(entry, entry)).items())[0] for entry in cur.fetchall()]]
+        cur.close()
+    except Exception as e: ## OperationalError
+        flash("Error while processing your last request: " + str(e.args[1]), "danger")
+
     ## when the form is submitted
-    if(request.method == "POST" and form.validate_on_submit()):
-        newProgram = form.__dict__
+    if(request.method == "POST" and programForm.validate_on_submit()):
+        newProgram = programForm.__dict__
         query = "INSERT INTO program(name, department) VALUES ('{}', '{}');".format(newProgram['name'].data, newProgram['department'].data)
         try:
             cur = db.connection.cursor()
@@ -92,8 +105,51 @@ def createProgram():
         except Exception as e: ## OperationalError
             flash("Error while processing your last request: " + str(e.args[1]), "danger")
 
+    if(request.method == "POST" and fieldForm.validate_on_submit()):
+        newField = fieldForm.__dict__
+        query = "INSERT INTO research_field(field_name, description) VALUES ('{}', '{}');".format(newField['field_name'].data, newField['description'].data)
+        try:
+            cur = db.connection.cursor()
+            cur.execute(query)
+            db.connection.commit()
+            cur.close()
+            flash("Research Field inserted successfully", "success")
+            return redirect(url_for("index"))
+        except Exception as e: ## OperationalError
+            flash("Error while processing your last request: " + str(e.args[1]), "danger")
+
+    if(request.method == "POST" and institutionForm.validate_on_submit()):
+        newInstitution = institutionForm.__dict__
+        query = "INSERT INTO institution(abbreviation, name, street_name, street_number, zip, city) VALUES ('{}', '{}', '{}', '{}', '{}', '{}');\
+        ".format(newInstitution['abbreviation'].data, newInstitution['name'].data, newInstitution['street_name'].data, newInstitution['street_number'].data, \
+        newInstitution['zip'].data, newInstitution['city'].data)
+        try:
+            cur = db.connection.cursor()
+            cur.execute(query)
+            db.connection.commit()
+            cur.close()
+            flash("Institution inserted successfully", "success")
+            return redirect(url_for("index"))
+        except Exception as e: ## OperationalError
+            flash("Error while processing your last request: " + str(e.args[1]), "danger")
+
+    if(request.method == "POST" and researcherForm.validate_on_submit()):
+        newResearcher = researcherForm.__dict__
+        query = "INSERT INTO researcher(first_name, last_name, sex, date_of_birth, ins_id, res_ins_date) VALUES ('{}', '{}', '{}', '{}', '{}', '{}');\
+        ".format(newResearcher['first_name'].data, newResearcher['last_name'].data, newResearcher['sex'].data, newResearcher['date_of_birth'].data, \
+        newResearcher['ins_id'].data, newResearcher['res_ins_date'].data)
+        try:
+            cur = db.connection.cursor()
+            cur.execute(query)
+            db.connection.commit()
+            cur.close()
+            flash("Researcher inserted successfully", "success")
+            return redirect(url_for("index"))
+        except Exception as e: ## OperationalError
+            flash("Error while processing your last request: " + str(e.args[1]), "danger")
+
     ## else, response for GET request
-    return render_template("create_program.html", pageTitle = "Create Program", form = form)
+    return render_template("create.html", pageTitle = "Create Page", programForm = programForm, fieldForm = fieldForm, institutionForm = institutionForm, researcherForm = researcherForm)
 
 @app.route("/programs/update/<int:programID>", methods = ["POST"])
 def updateProgram(programID):
@@ -415,7 +471,13 @@ def getResearchers():
         updateForm = ResearcherUpdateForm()
         btnPressed=request.args.get('listOfObjects') # argument from button pressed
         if (btnPressed == None):
-            query = "SELECT r.res_id, r.first_name, r.last_name, r.sex, r.date_of_birth FROM researcher r;"
+            # find choices
+            query = "SELECT ins_id FROM institution ORDER BY ins_id;"
+            cur = db.connection.cursor()
+            cur.execute(query)
+            updateForm.ins_id.choices = [list(dict(zip(entry, entry)).items())[0] for entry in cur.fetchall()]
+            cur.close()
+            query = "SELECT r.res_id, r.first_name, r.last_name, r.sex, r.date_of_birth, r.ins_id, r.res_ins_date FROM researcher r;"
         elif (btnPressed == 'pressed_2'):
             query = "SELECT r.res_id, r.first_name, r.last_name, count(*) AS num_of_projects \
             FROM researcher r INNER JOIN works w ON r.res_id = w.res_id \
@@ -444,11 +506,17 @@ def updateResearcher(researcherID):
     Update a researcher in the database, by id
     """
     updateForm = ResearcherUpdateForm()
+    # find choices
+    query = "SELECT ins_id FROM institution ORDER BY ins_id;"
+    cur = db.connection.cursor()
+    cur.execute(query)
+    updateForm.ins_id.choices = [list(dict(zip(entry, entry)).items())[0] for entry in cur.fetchall()]
+    cur.close()
     updateData = updateForm.__dict__
     if(updateForm.validate_on_submit()):
         query = "UPDATE researcher SET first_name = '{}', last_name = '{}', sex = '{}', \
-        date_of_birth = '{}' WHERE res_id = {};".format(updateData['first_name'].data, updateData['last_name'].data, \
-        updateData['sex'].data, updateData['date_of_birth'].data, researcherID)
+        date_of_birth = '{}', ins_id = '{}', res_ins_date = '{}' WHERE res_id = {};".format(updateData['first_name'].data, updateData['last_name'].data, \
+        updateData['sex'].data, updateData['date_of_birth'].data, updateData['ins_id'].data, updateData['res_ins_date'].data, researcherID)
         try:
             cur = db.connection.cursor()
             cur.execute(query)

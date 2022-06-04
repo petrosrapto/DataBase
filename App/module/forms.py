@@ -1,6 +1,6 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, SubmitField, DateField, SelectField, IntegerField, DecimalField
-from wtforms.validators import DataRequired, Email, Optional, Length
+from wtforms.validators import DataRequired, Email, Optional, Length, InputRequired, NumberRange, ValidationError
 
 ## when passed as a parameter to a template, an object of this class will be rendered as a regular HTML form
 ## with the additional restrictions specified for each field
@@ -40,12 +40,18 @@ class ProjectForm(FlaskForm):
     duration = SelectField("Project's Duration (Αpprox.)", default='def',choices=[('def', 'Select Duration'), ('1', 'One Year'), ('2', 'Two Years'), ('3', 'Three Years'), ('4', 'Four Years')])
     submit = SubmitField("Search")
     clear = SubmitField("Clear")
-    
+
+def default_check(form, field):
+    if field.data == 'def':
+        raise ValidationError("Sex is a required field.")
+
 class ResearcherUpdateForm(FlaskForm):
     first_name = StringField(label = "First Name", validators = [DataRequired(message = "First Name is a required field.")])
     last_name = StringField(label = "Last Name", validators = [DataRequired(message = "Last Name is a required field.")])
-    sex = SelectField(label = "Sex", default='def',choices=[('def', 'Select Sex'), ('M', 'Male'), ('F', 'Female'), ('O', 'Other')], validators = [DataRequired(message = "Sex is a required field.")])
+    sex = SelectField(label = "Sex", default='def',choices=[('def', 'Select Sex'), ('M', 'Male'), ('F', 'Female'), ('O', 'Other')], validators = [DataRequired(message = "Sex is a required field."), default_check])
     date_of_birth = DateField(label = "Date Of Birth", format='%Y-%m-%d', validators = [DataRequired(message = "Date Of Birth is a required field.")])
+    ins_id = SelectField(label = "Works for Institution", coerce=int, validators = [InputRequired(), DataRequired(message = "Institution's ID is a required field."), NumberRange(min=1, message="Institution's ID is a required field.")])
+    res_ins_date = DateField(label = "Works Since", format='%Y-%m-%d', validators = [DataRequired(message = "Works since date is a required field.")])
     submit = SubmitField("Create")
 
 class ProjectUpdateForm(FlaskForm):
