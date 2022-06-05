@@ -11,4 +11,4 @@ INNER JOIN pf pf2
 ON pf1.proj_id = pf2.proj_id 
 WHERE pf1.field_id < pf2.field_id 
 GROUP BY pf1.field_name, pf2.field_name 
-ORDER BY popularity DESC LIMIT 3;"
+ORDER BY popularity DESC LIMIT 3;
