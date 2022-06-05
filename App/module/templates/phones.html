@@ -1,0 +1,142 @@
+{% extends "global_layout.html" %}
+{% block content %}
+<div class="container">
+    {% include "flash_messages.html" %}
+    <div class="row" id="row">
+        <div class="col-md-12">
+            <div class="card" id="card-container">
+                <div class="card-body" id="card">
+                {% if phones|length == 0 %}
+                    <h1 style="margin-top: 5rem;">No Phone Numbers found!</h1>
+                {% else %}
+                    <div class="table-responsive">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Institution's ID</th>
+                                    <th>Phone Number</th>
+                                    <th></th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for phone in phones %}
+                                    <tr>
+                                        <td> {{ phone.ins_id }} </td>
+                                        <td> {{ phone.phone_number }} </td>
+                                        <td>
+                                            <a type="button" onclick="setEditModalFields(this)"
+                                            data-toggle="modal" data-ins_id="{{ phone.ins_id }}"
+                                            data-phone_number="{{ phone.phone_number }}"
+                                            data-bs-toggle = "modal"
+                                            data-bs-target="#editModal">
+                                                <i class="fa fa-edit"></i>
+                                            </a>
+                                        </td>
+                                        <td>
+                                            <button style = "all: unset; cursor: pointer;" type = "button"
+                                            data-bs-toggle = "modal" data-bs-target = "#deleteModal"
+                                            data-ins_id="{{ phone.ins_id }}"
+                                            data-phone_number="{{ phone.phone_number }}" onclick = "setDeleteModalFields(this)">
+                                                <i class = "fa fa-trash"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Edit modal -->
+<div id="editModal" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header text-center">
+                <h4 class="modal-title w-100">Edit Phone Number</h4>
+            </div>
+            <div class="modal-body">
+                <form class="form-horizontal" id="modal-form">
+                    {{ form.hidden_tag() }}
+                    <div class="form-group col-sm-3 mb-3 col-centered" style="text-align: center;">
+                        {{ form.phoneForm_ins_id.label(class = "form-label") }}
+                        <input class = "form-control" type="text" name="ins_id" id="phoneForm_ins_id" readonly style="text-align:center;">
+                        {% if form.phoneForm_ins_id.errors %}
+                        <ul class = "errors">
+                            {% for error in form.phoneForm_ins_id.errors %}
+                            <li class = "alert text-danger">{{ error }}</li>
+                            {% endfor %}
+                        </ul>
+                        {% endif %}
+                    </div>
+                    <div class="form-group col-sm-12 mb-3" style="text-align: center;">
+                        {{ form.phoneForm_phone_number.label(class = "form-label") }}
+                        <!-- Setting required to false disables the HTML attribute and leaves input validation to the backend -->
+                        {{ form.phoneForm_phone_number(class = "form-control", id = "phoneForm_phone_number", required = False, style="text-align:center;") }}
+                        {% if form.phoneForm_phone_number.errors %}
+                        <ul class = "errors">
+                            {% for error in form.phoneForm_phone_number.errors %}
+                            <li class = "alert text-danger">{{ error }}</li>
+                            {% endfor %}
+                        </ul>
+                        {% endif %}
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer col-centered">
+                {{ form.submit(class = "btn btn btn-success", form = "modal-form", value = "Update") }}
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<!-- Delete modal -->
+<div class = "modal fade" id="deleteModal">
+    <div class = "modal-dialog">
+        <div class = "modal-content">
+            <div class = "modal-header text-center">
+                <h5 class = "modal-title w-100" id = "deleteModalLabel">Delete Phone Number</h5>
+                <button type = "button" class = "btn-close" data-bs-dismiss = "modal" aria-label = "Close"></button>
+            </div>
+            <div class = "modal-body" style="text-align: center;">
+                Selected Phone Number will be deleted<br>
+                Are you sure?
+            </div>
+            <div class = "modal-footer col-centered">
+                <button type = "button" class = "btn btn-secondary" data-bs-dismiss = "modal">Close</button>
+                <form id = "delete-modal-form">
+                    <input type = "submit" class = "btn btn-danger" value = "Delete">
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+
+  function setEditModalFields(row) {
+      document.getElementById("phoneForm_ins_id").value = row.getAttribute("data-ins_id");
+      document.getElementById("phoneForm_phone_number").value = row.getAttribute("data-phone_number");
+      document.getElementById("modal-form").action = "/phones/update/" + row.getAttribute("data-ins_id") + "/" + row.getAttribute("data-phone_number");
+      document.getElementById("modal-form").method = "POST";
+      // document.getElementById("submit").addEventListener("click", (e) => {e.preventDefault();});
+      // commented line above would prevent the default behavior of the submit button, that is, sending the
+      // form data with a post request to the determined address and subsequently closing the pop-up
+  }
+
+  function setDeleteModalFields(row) {
+      document.getElementById("delete-modal-form").action = "/phones/delete/" + row.getAttribute("data-ins_id") + "/" + row.getAttribute("data-phone_number");
+      document.getElementById("delete-modal-form").method = "POST";
+  }
+
+</script>
+
+{% endblock content %}

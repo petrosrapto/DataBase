@@ -1,0 +1,301 @@
+{% extends "global_layout.html" %}
+{% block content %}
+<div class="container">
+    {% include "flash_messages.html" %}
+    <div class="row" id="row-2">
+        <div class="col-md-4"></div>
+        <div class="col-md-4">
+           <div class="card" id="card-container">
+               <div class="card-body" id="card">
+                    <p class="card-text" id="paragraph"><br><br>Show me in how many projects<br>each researcher has participated.</p>
+                    <a class="btn btn-primary" id="show-btn" href="{{ url_for('getResearchers', listOfObjects='pressed_1') }}">Show</a>
+               </div>
+           </div>
+        </div>
+    </div>
+    <div class="row" id="row-2">
+        <div class="col-md-4"></div>
+        <div class="col-md-4">
+           <div class="card" id="card-container">
+               <div class="card-body" id="card">
+                    <p class="card-text" id="paragraph"><br><br>Show me the researchers working on 5 or more projects,
+                    which don't have any deliverables.</p>
+                    <a class="btn btn-primary" id="show-btn" href="{{ url_for('getResearchers', listOfObjects='pressed_2') }}">Show</a>
+               </div>
+           </div>
+        </div>
+    </div>
+    <div class="row" id="row-2">
+        <div class="col-md-12">
+            <div class="card" id="card-container">
+                <div class="card-body" id="card">
+                {% if researchers|length == 0 %}
+                    <!-- |length is a jinja2 filter that returns the amount of items in a sequence -->
+                    <h1 style="margin-top: 5rem;">No Researchers found!</h1>
+                {% else %}
+                    <div class="table-responsive">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>First Name</th>
+                                    <th>Last Name</th>
+                                    {% if "sex" in researchers[0] %}
+                                        <th>Sex</th>
+                                    {% endif %}
+                                    {% if "date_of_birth" in researchers[0] %}
+                                        <th>Date of Birth</th>
+                                    {% endif %}
+                                    {% if "ins_id" in researchers[0] %}
+                                        <th>Works for<br>Institution (ID)</th>
+                                    {% endif %}
+                                    {% if "res_ins_date" in researchers[0] %}
+                                        <th>Since</th>
+                                    {% endif %}
+                                    {% if "num_of_projects" in researchers[0] %}
+                                        <th>Number Of Projects</th>
+                                    {% endif %}
+                                    <!-- check if initial view is displayed -->
+                                    {% if "date_of_birth" in researchers[0] %}
+                                        <th></th>
+                                    {% endif %}
+                                    {% if (("date_of_birth" in researchers[0]) and (fromProject != None)) %}
+                                        <th></th>
+                                    {% endif %}
+                                    {% if "date_of_birth" in researchers[0] %}
+                                        <th></th>
+                                    {% endif %}
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for researcher in researchers %}
+                                    <tr>
+                                        <td> {{ researcher.res_id }} </td>
+                                        <td> {{ researcher.first_name }} </td>
+                                        <td> {{ researcher.last_name }} </td>
+                                        {% if "sex" in researchers[0] %}
+                                            <td> {{ researcher.sex }} </td>
+                                        {% endif %}
+                                        {% if "date_of_birth" in researchers[0] %}
+                                            <td> {{ researcher.date_of_birth }} </td>
+                                        {% endif %}
+                                        {% if "ins_id" in researchers[0] %}
+                                            <td> {{ researcher.ins_id }} </td>
+                                        {% endif %}
+                                        {% if "res_ins_date" in researchers[0] %}
+                                            <td> {{ researcher.res_ins_date }} </td>
+                                        {% endif %}
+                                        {% if "num_of_projects" in researchers[0] %}
+                                            <td> {{ researcher.num_of_projects }} </td>
+                                        {% endif %}
+                                        {% if "date_of_birth" in researchers[0] %}
+                                            <td>
+                                                <a type="button" onclick="setEditModalFields(this)"
+                                                data-toggle="modal" data-res_id="{{ researcher.res_id }}"
+                                                data-first_name="{{ researcher.first_name }}"  data-last_name= "{{ researcher.last_name }}"
+                                                data-sex= "{{ researcher.sex }}" data-date_of_birth= "{{ researcher.date_of_birth }}"
+                                                data-ins_id= "{{ researcher.ins_id }}" data-res_ins_date= "{{ researcher.res_ins_date }}" data-bs-toggle = "modal"
+                                                data-bs-target="#editModal">
+                                                    <i class="fa fa-edit"></i>
+                                                </a>
+                                            </td>
+                                        {% endif %}
+                                        {% if (("date_of_birth" in researchers[0]) and (fromProject != None)) %}
+                                            <td>
+                                                <button style = "all: unset; cursor: pointer;" type = "button"
+                                                data-bs-toggle = "modal" data-bs-target = "#deleteWorksModal"
+                                                data-works_res_id = "{{ researcher.res_id }}" data-works_proj_id = "{{ fromProject }}" onclick = "setDeleteWorksModalFields(this)">
+                                                    <i class = "fa fa-cog"></i>
+                                                </button>
+                                            </td>
+                                        {% endif %}
+                                        {% if "date_of_birth" in researchers[0] %}
+                                            <td>
+                                                <button style = "all: unset; cursor: pointer;" type = "button"
+                                                data-bs-toggle = "modal" data-bs-target = "#deleteModal"
+                                                data-id = "{{ researcher.res_id}}" onclick = "setDeleteModalFields(this)">
+                                                    <i class = "fa fa-trash"></i>
+                                                </button>
+                                            </td>
+                                        {% endif %}
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Edit modal -->
+<div id="editModal" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header text-center">
+                <h4 class="modal-title w-100">Edit Researcher</h4>
+            </div>
+            <div class="modal-body">
+                <form class="form-horizontal" id="modal-form">
+                    {{ updateForm.hidden_tag() }}
+                    <div class="form-group col-sm-3 mb-3 col-centered" style="text-align: center;">
+                        <label for="update_id" class = "form-label">ID</label><br>
+                        <input class = "form-control" type="text" name="id" id="update_id" readonly style="text-align:center;">
+                    </div>
+                    <div class="form-group col-sm-12 mb-3" style="text-align: center;">
+                        {{ updateForm.first_name.label(class = "form-label") }}
+                        <!-- Setting required to false disables the HTML attribute and leaves input validation to the backend -->
+                        {{ updateForm.first_name(class = "form-control", id = "update_first_name", required = False, style="text-align:center;") }}
+                        {% if updateForm.first_name.errors %}
+                        <ul class = "errors">
+                            {% for error in updateForm.first_name.errors %}
+                            <li class = "alert text-danger">{{ error }}</li>
+                            {% endfor %}
+                        </ul>
+                        {% endif %}
+                    </div>
+                    <div class="form-group col-sm-12 mb-3" style="text-align: center;">
+                        {{ updateForm.last_name.label(class = "form-label") }}
+                        <!-- Setting required to false disables the HTML attribute and leaves input validation to the backend -->
+                        {{ updateForm.last_name(class = "form-control", id = "update_last_name", required = False, style="text-align:center;") }}
+                        {% if updateForm.last_name.errors %}
+                        <ul class = "errors">
+                            {% for error in updateForm.last_name.errors %}
+                            <li class = "alert text-danger">{{ error }}</li>
+                            {% endfor %}
+                        </ul>
+                        {% endif %}
+                    </div>
+                    <div class="form-group col-sm-4 mb-3 col-centered" style="text-align: center;">
+                        {{ updateForm.sex.label(class = "form-label") }}
+                        <!-- Setting required to false disables the HTML attribute and leaves input validation to the backend -->
+                        {{ updateForm.sex(class = "form-control", id = "update_sex", required = False, style="text-align:center;") }}
+                        {% if updateForm.sex.errors %}
+                        <ul class = "errors">
+                            {% for error in updateForm.sex.errors %}
+                            <li class = "alert text-danger">{{ error }}</li>
+                            {% endfor %}
+                        </ul>
+                        {% endif %}
+                    </div>
+                    <div class="form-group col-sm-4 mb-3 col-centered" style="text-align: center;">
+                        {{ updateForm.date_of_birth.label(class = "form-label") }}
+                        <!-- Setting required to false disables the HTML attribute and leaves input validation to the backend -->
+                        {{ updateForm.date_of_birth(class = "form-control", id = "update_date_of_birth", required = False) }}
+                        {% if updateForm.date_of_birth.errors %}
+                        <ul class = "errors">
+                            {% for error in updateForm.date_of_birth.errors %}
+                            <li class = "alert text-danger">{{ error }}</li>
+                            {% endfor %}
+                        </ul>
+                        {% endif %}
+                    </div>
+                    <div class="form-group col-sm-4 mb-3 col-centered" name = "ins_id" style="text-align: center;">
+                        {{ updateForm.ins_id.label(class = "form-label") }}
+                        <!-- Setting required to false disables the HTML attribute and leaves input validation to the backend -->
+                        {{ updateForm.ins_id(class = "form-control", id = "update_ins_id", required = False, style="text-align:center;") }}
+                        {% if updateForm.ins_id.errors %}
+                        <ul class = "errors">
+                            {% for error in updateForm.ins_id.errors %}
+                            <li class = "alert text-danger">{{ error }}</li>
+                            {% endfor %}
+                        </ul>
+                        {% endif %}
+                    </div>
+                    <div class="form-group col-sm-4 mb-3 col-centered" style="text-align: center;">
+                        {{ updateForm.res_ins_date.label(class = "form-label") }}
+                        <!-- Setting required to false disables the HTML attribute and leaves input validation to the backend -->
+                        {{ updateForm.res_ins_date(class = "form-control", id = "update_res_ins_date", required = False, style="text-align:center;") }}
+                        {% if updateForm.res_ins_date.errors %}
+                        <ul class = "errors">
+                            {% for error in updateForm.res_ins_date.errors %}
+                            <li class = "alert text-danger">{{ error }}</li>
+                            {% endfor %}
+                        </ul>
+                        {% endif %}
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer col-centered">
+                {{ updateForm.submit(class = "btn btn btn-success", form = "modal-form", value = "Update") }}
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<!-- Delete modal -->
+<div class = "modal fade" id="deleteModal">
+    <div class = "modal-dialog">
+        <div class = "modal-content">
+            <div class = "modal-header text-center">
+                <h5 class = "modal-title w-100" id = "deleteModalLabel">Delete Researcher</h5>
+                <button type = "button" class = "btn-close" data-bs-dismiss = "modal" aria-label = "Close"></button>
+            </div>
+            <div class = "modal-body" style="text-align: center;">
+                All information regarding the researcher will be deleted.<br>
+                Are you sure?
+            </div>
+            <div class = "modal-footer col-centered">
+                <button type = "button" class = "btn btn-secondary" data-bs-dismiss = "modal">Close</button>
+                <form id = "delete-modal-form">
+                    <input type = "submit" class = "btn btn-danger" value = "Delete">
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Delete Works modal -->
+<div class = "modal fade" id="deleteWorksModal">
+    <div class = "modal-dialog">
+        <div class = "modal-content">
+            <div class = "modal-header text-center">
+                <h5 class = "modal-title w-100" id = "deleteWorksModalLabel">Delete Researcher from Project</h5>
+                <button type = "button" class = "btn-close" data-bs-dismiss = "modal" aria-label = "Close"></button>
+            </div>
+            <div class = "modal-body" style="text-align: center;">
+                Delete researcher from selected project.
+            </div>
+            <div class = "modal-footer col-centered">
+                <button type = "button" class = "btn btn-secondary" data-bs-dismiss = "modal">Close</button>
+                <form id = "deleteWorks-modal-form">
+                    <input type = "submit" class = "btn btn-danger" value = "Delete">
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+
+    function setEditModalFields(row) {
+        document.getElementById("update_id").value = row.getAttribute("data-res_id");
+        document.getElementById("update_first_name").value = row.getAttribute("data-first_name");
+        document.getElementById("update_last_name").value = row.getAttribute("data-last_name");
+        document.getElementById("update_sex").value = row.getAttribute("data-sex");
+        document.getElementById("update_date_of_birth").value = row.getAttribute("data-date_of_birth");
+        document.getElementById("update_ins_id").value = row.getAttribute("data-ins_id");
+        document.getElementById("update_res_ins_date").value = row.getAttribute("data-res_ins_date");
+        document.getElementById("modal-form").action = "/researchers/update/" + row.getAttribute("data-res_id");
+        document.getElementById("modal-form").method = "POST";
+        // document.getElementById("submit").addEventListener("click", (e) => {e.preventDefault();});
+        // commented line above would prevent the default behavior of the submit button, that is, sending the
+        // form data with a post request to the determined address and subsequently closing the pop-up
+    }
+
+    function setDeleteModalFields(row) {
+        document.getElementById("delete-modal-form").action = "/researchers/delete/" + row.getAttribute("data-id");
+        document.getElementById("delete-modal-form").method = "POST";
+    }
+
+    function setDeleteWorksModalFields(row) {
+        document.getElementById("deleteWorks-modal-form").action = "/researchers/works/delete/" + row.getAttribute("data-works_res_id") + "/" + row.getAttribute("data-works_proj_id");
+        document.getElementById("deleteWorks-modal-form").method = "POST";
+    }
+</script>
+{% endblock content %}

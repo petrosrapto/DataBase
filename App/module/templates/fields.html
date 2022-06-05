@@ -1,0 +1,181 @@
+{% extends "global_layout.html" %}
+{% block content %}
+<div class="container">
+    {% include "flash_messages.html" %}
+    <div class="row" id="row">
+        <div class="col-md-12">
+            <div class="card" id="card-container">
+                <div class="card-body" id="card">
+                {% if fields|length == 0 %}
+                    <h1 style="margin-top: 5rem;">No Fields found!</h1>
+                {% else %}
+                    <div class="table-responsive">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Name</th>
+                                    <th>Description</th>
+                                    <th></th>
+                                    <th></th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for field in fields %}
+                                    <tr>
+                                        <td> {{ field.field_id }} </td>
+                                        <td> {{ field.field_name }} </td>
+                                        <td> {{ field.description }} </td>
+                                        <td>
+                                          <button style = "all: unset; cursor: pointer;" type = "button"
+                                          data-bs-toggle = "modal" data-bs-target = "#projectModal"
+                                          data-id = "{{ field.field_id }}" onclick = "setProjectModalFields(this)">
+                                                <i class="fa-solid fa-vial"></i>
+                                            </button>
+                                        </td>
+                                        <td>
+                                            <button style = "all: unset; cursor: pointer;" type = "button"
+                                            data-bs-toggle = "modal" data-bs-target = "#researcherModal"
+                                            data-id = "{{ field.field_id }}" onclick = "setResearcherModalFields(this)">
+                                                <i class="fa-solid fa-user-graduate"></i>
+                                            </button>
+                                        </td>
+                                        <td>
+                                            <a type="button" onclick="setEditModalFields(this)"
+                                            data-toggle="modal" data-field_id="{{ field.field_id }}"
+                                            data-field_name="{{ field.field_name }}"  data-description= "{{ field.description }}"
+                                            data-bs-toggle = "modal"
+                                            data-bs-target="#editModal">
+                                                <i class="fa fa-edit"></i>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- Projects modal -->
+<div class = "modal fade" id="projectModal">
+    <div class = "modal-dialog">
+        <div class = "modal-content">
+            <div class = "modal-header">
+                <h5 class = "modal-title" id = "projectModalLabel">Show Projects</h5>
+                <button type = "button" class = "btn-close" data-bs-dismiss = "modal" aria-label = "Close"></button>
+            </div>
+            <div class = "modal-body">
+                Show me the active projects having received funds and are related to the selected research field.
+            </div>
+            <div class = "modal-footer">
+                <button type = "button" class = "btn btn-secondary" data-bs-dismiss = "modal">No</button>
+                <form id = "project-modal-form">
+                    <input type = "submit" class = "btn btn-danger" value = "Yes">
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Researchers modal -->
+<div class = "modal fade" id="researcherModal">
+    <div class = "modal-dialog">
+        <div class = "modal-content">
+            <div class = "modal-header">
+                <h5 class = "modal-title" id = "researcherModalLabel">Show Researcher</h5>
+                <button type = "button" class = "btn-close" data-bs-dismiss = "modal" aria-label = "Close"></button>
+            </div>
+            <div class = "modal-body">
+                Show me the researchers working (within the past year) on projects related to the selected research field.
+            </div>
+            <div class = "modal-footer">
+                <button type = "button" class = "btn btn-secondary" data-bs-dismiss = "modal">No</button>
+                <form id = "researcher-modal-form">
+                    <input type = "submit" class = "btn btn-danger" value = "Yes">
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Edit modal -->
+<div id="editModal" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header text-center">
+                <h4 class="modal-title w-100">Edit Research Field</h4>
+            </div>
+            <div class="modal-body">
+                <form class="form-horizontal" id="modal-form">
+                    {{ form.hidden_tag() }}
+                    <div class="form-group col-sm-3 mb-3 col-centered" style="text-align: center;">
+                        <label for="id" class = "form-label">ID</label><br>
+                        <input class = "form-control" type="text" name="id" id="id" readonly style="text-align:center;">
+                    </div>
+                    <div class="form-group col-sm-12 mb-3" style="text-align: center;">
+                        {{ form.field_name.label(class = "form-label") }}
+                        <!-- Setting required to false disables the HTML attribute and leaves input validation to the backend -->
+                        {{ form.field_name(class = "form-control", id = "field_name", required = False, style="text-align:center;") }}
+                        {% if form.field_name.errors %}
+                        <ul class = "errors">
+                            {% for error in form.field_name.errors %}
+                            <li class = "alert text-danger">{{ error }}</li>
+                            {% endfor %}
+                        </ul>
+                        {% endif %}
+                    </div>
+                    <div class="form-group col-sm-12 mb-3" style="text-align: center;">
+                        {{ form.description.label(class = "form-label") }}
+                        <!-- Setting required to false disables the HTML attribute and leaves input validation to the backend -->
+                        {{ form.description(class = "form-control", id = "description", required = False, style="text-align:center;") }}
+                        {% if form.description.errors %}
+                        <ul class = "errors">
+                            {% for error in form.description.errors %}
+                            <li class = "alert text-danger">{{ error }}</li>
+                            {% endfor %}
+                        </ul>
+                        {% endif %}
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer col-centered">
+                {{ form.submit(class = "btn btn btn-success", form = "modal-form", value = "Update") }}
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<script>
+  function setProjectModalFields(row) {
+      document.getElementById("project-modal-form").action = "/fields/projects/" + row.getAttribute("data-id");
+      document.getElementById("project-modal-form").method = "GET";
+  }
+
+  function setResearcherModalFields(row) {
+      document.getElementById("researcher-modal-form").action = "/fields/researchers/" + row.getAttribute("data-id");
+      document.getElementById("researcher-modal-form").method = "GET";
+  }
+
+  function setEditModalFields(row) {
+      document.getElementById("id").value = row.getAttribute("data-field_id");
+      document.getElementById("field_name").value = row.getAttribute("data-field_name");
+      document.getElementById("description").value = row.getAttribute("data-description");
+      document.getElementById("modal-form").action = "/fields/update/" + row.getAttribute("data-field_id");
+      document.getElementById("modal-form").method = "POST";
+      // document.getElementById("submit").addEventListener("click", (e) => {e.preventDefault();});
+      // commented line above would prevent the default behavior of the submit button, that is, sending the
+      // form data with a post request to the determined address and subsequently closing the pop-up
+  }
+</script>
+
+{% endblock content %}

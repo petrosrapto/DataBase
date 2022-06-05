@@ -1,0 +1,10 @@
+INSERT INTO company (ins_id, Equity) VALUES (78021, 1000000);
+INSERT INTO company (ins_id, Equity) VALUES (78022, 1500000);
+INSERT INTO company (ins_id, Equity) VALUES (78023, 2000000);
+INSERT INTO company (ins_id, Equity) VALUES (78024, 1400000);
+INSERT INTO company (ins_id, Equity) VALUES (78025, 900000);
+INSERT INTO company (ins_id, Equity) VALUES (78026, 850000);
+INSERT INTO company (ins_id, Equity) VALUES (78027, 1100000);
+INSERT INTO company (ins_id, Equity) VALUES (78028, 700000);
+INSERT INTO company (ins_id, Equity) VALUES (78029, 1500000);
+INSERT INTO company (ins_id, Equity) VALUES (78030, 1300000);

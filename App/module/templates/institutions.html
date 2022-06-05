@@ -1,0 +1,332 @@
+{% extends "global_layout.html" %}
+{% block content %}
+<div class="container">
+    {% include "flash_messages.html" %}
+    <div class="row" id="row-2">
+        <div class="col-md-4"></div>
+        <div class="col-md-4">
+           <div class="card" id="card-container">
+               <div class="card-body" id="card">
+                    <p class="card-text" id="paragraph"><br>Show me how many projects each institution managed each year.</p>
+                    <a class="btn btn-primary" id="show-btn" href="{{ url_for('getInstitutions', listOfObjects='pressed_1') }}">Show</a>
+               </div>
+           </div>
+        </div>
+    </div>
+    <div class="row" id="row-2">
+        <div class="col-md-4"></div>
+        <div class="col-md-4">
+           <div class="card" id="card-container">
+               <div class="card-body" id="card">
+                    <p class="card-text" id="paragraph"><br>Show me the institutions, which have received
+                    the same amount of projects for two consecutive years with at least
+                    10 projects yearly.</p>
+                    <a class="btn btn-primary" id="show-btn" href="{{ url_for('getInstitutions', listOfObjects='pressed_2') }}">Show</a>
+               </div>
+           </div>
+        </div>
+    </div>
+    <div class="row" id="row-2">
+        <div class="col-md-12">
+            <div class="card" id="card-container">
+                <div class="card-body" id="card">
+                {% if institutions|length == 0 %}
+                    <h1 style="margin-top: 5rem;">No Institutions found!</h1>
+                {% else %}
+                    <div class="table-responsive">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Abbreviation</th>
+                                    <th>Name</th>
+                                    <!-- Check if address is given -->
+                                    {% if "address" in institutions[0] %}
+                                        <th>Address</th>
+                                    {% endif %}
+                                    {% if "street_name" in institutions[0] %}
+                                        <th>Street Name</th>
+                                    {% endif %}
+                                    {% if "street_number" in institutions[0] %}
+                                        <th>Number</th>
+                                    {% endif %}
+                                    {% if "city" in institutions[0] %}
+                                        <th>City</th>
+                                    {% endif %}
+                                    {% if "zip" in institutions[0] %}
+                                        <th>Zip</th>
+                                    {% endif %}
+                                    {% if "first_year" in institutions[0] %}
+                                        <th>First Year</th>
+                                    {% endif %}
+                                    {% if "second_year" in institutions[0] %}
+                                        <th>Second Year</th>
+                                    {% endif %}
+                                    {% if "projects_each_year" in institutions[0] %}
+                                        <th>Projects Each Year</th>
+                                    {% endif %}
+                                    {% if "projects" in institutions[0] %}
+                                        <th>Projects</th>
+                                    {% endif %}
+                                    {% if "year" in institutions[0] %}
+                                        <th>Year</th>
+                                    {% endif %}
+                                    <!-- Check if initial view of institution is displayed -->
+                                    {% if "street_name" in institutions[0] %}
+                                        <th></th>
+                                    {% endif %}
+                                    {% if "street_name" in institutions[0] %}
+                                        <th></th>
+                                    {% endif %}
+                                    {% if "street_name" in institutions[0] %}
+                                        <th></th>
+                                    {% endif %}
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for institution in institutions %}
+                                    <tr>
+                                        <td> {{ institution.ins_id }} </td>
+                                        <td> {{ institution.abbreviation }} </td>
+                                        <td> {{ institution.name }} </td>
+                                        {% if "street_name" in institutions[0] %}
+                                          <td> {{ institution.street_name }} </td>
+                                        {% endif %}
+                                        {% if "street_number" in institutions[0] %}
+                                          <td> {{ institution.street_number }} </td>
+                                        {% endif %}
+                                        {% if "city" in institutions[0] %}
+                                          <td> {{ institution.city }} </td>
+                                        {% endif %}
+                                        {% if "zip" in institutions[0] %}
+                                          <td> {{ institution.zip }} </td>
+                                        {% endif %}
+                                        {% if "first_year" in institutions[0] %}
+                                            <td> {{ institution.first_year }} </td>
+                                        {% endif %}
+                                        {% if "second_year" in institutions[0] %}
+                                            <td> {{ institution.second_year }} </td>
+                                        {% endif %}
+                                        {% if "projects_each_year" in institutions[0] %}
+                                            <td> {{ institution.projects_each_year }} </td>
+                                        {% endif %}
+                                        {% if "projects" in institutions[0] %}
+                                            <td> {{ institution.projects }} </td>
+                                        {% endif %}
+                                        {% if "year" in institutions[0] %}
+                                            <td> {{ institution.year }} </td>
+                                        {% endif %}
+                                        {% if "street_name" in institutions[0] %}
+                                            <td>
+                                                <button style = "all: unset; cursor: pointer;" type = "button"
+                                                data-bs-toggle = "modal" data-bs-target = "#phoneModal"
+                                                data-id = "{{ institution.ins_id }}" onclick = "setPhoneModalFields(this)">
+                                                    <i class = "fa fa-phone"></i>
+                                                </button>
+                                            </td>
+                                        {% endif %}
+                                        {% if "street_name" in institutions[0] %}
+                                            <td>
+                                                <a type="button" onclick="setEditModalFields(this)"
+                                                data-toggle="modal" data-ins_id="{{ institution.ins_id }}"
+                                                data-abbreviation="{{ institution.abbreviation }}"  data-name= "{{ institution.name }}"
+                                                data-street_name= "{{ institution.street_name }}" data-street_number= "{{ institution.street_number }}"
+                                                data-city= "{{ institution.city }}" data-zip= "{{ institution.zip }}"
+                                                data-bs-toggle = "modal"
+                                                data-bs-target="#editModal">
+                                                    <i class="fa fa-edit"></i>
+                                                </a>
+                                            </td>
+                                        {% endif %}
+                                        {% if "street_name" in institutions[0] %}
+                                            <td>
+                                                <button style = "all: unset; cursor: pointer;" type = "button"
+                                                data-bs-toggle = "modal" data-bs-target = "#deleteModal"
+                                                data-id = "{{ institution.ins_id }}" onclick = "setDeleteModalFields(this)">
+                                                    <i class = "fa fa-trash"></i>
+                                                </button>
+                                            </td>
+                                        {% endif %}
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Edit modal -->
+<div id="editModal" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header text-center">
+                <h4 class="modal-title w-100">Edit Institution</h4>
+            </div>
+            <div class="modal-body">
+                <form class="form-horizontal" id="modal-form">
+                    {{ form.hidden_tag() }}
+                    <div class="form-group col-sm-3 mb-3 col-centered" style="text-align: center;">
+                        <label for="id" class = "form-label">ID</label><br>
+                        <input class = "form-control" type="text" name="id" id="id" readonly style="text-align:center;">
+                    </div>
+                    <div class="form-group col-sm-12 mb-3" style="text-align: center;">
+                        {{ form.abbreviation.label(class = "form-label") }}
+                        <!-- Setting required to false disables the HTML attribute and leaves input validation to the backend -->
+                        {{ form.abbreviation(class = "form-control", id = "abbreviation", required = False, style="text-align:center;") }}
+                        {% if form.abbreviation.errors %}
+                        <ul class = "errors">
+                            {% for error in form.abbreviation.errors %}
+                            <li class = "alert text-danger">{{ error }}</li>
+                            {% endfor %}
+                        </ul>
+                        {% endif %}
+                    </div>
+                    <div class="form-group col-sm-12 mb-3" style="text-align: center;">
+                        {{ form.name.label(class = "form-label") }}
+                        <!-- Setting required to false disables the HTML attribute and leaves input validation to the backend -->
+                        {{ form.name(class = "form-control", id = "name", required = False, style="text-align:center;") }}
+                        {% if form.name.errors %}
+                        <ul class = "errors">
+                            {% for error in form.name.errors %}
+                            <li class = "alert text-danger">{{ error }}</li>
+                            {% endfor %}
+                        </ul>
+                        {% endif %}
+                    </div>
+                    <div class="form-group col-sm-12 mb-3" style="text-align: center;">
+                        {{ form.street_name.label(class = "form-label") }}
+                        <!-- Setting required to false disables the HTML attribute and leaves input validation to the backend -->
+                        {{ form.street_name(class = "form-control", id = "street_name", required = False, style="text-align:center;") }}
+                        {% if form.street_name.errors %}
+                        <ul class = "errors">
+                            {% for error in form.street_name.errors %}
+                            <li class = "alert text-danger">{{ error }}</li>
+                            {% endfor %}
+                        </ul>
+                        {% endif %}
+                    </div>
+                    <div class="form-group col-sm-12 mb-3" style="text-align: center;">
+                        {{ form.street_number.label(class = "form-label") }}
+                        <!-- Setting required to false disables the HTML attribute and leaves input validation to the backend -->
+                        {{ form.street_number(class = "form-control", id = "street_number", required = False, style="text-align:center;") }}
+                        {% if form.street_number.errors %}
+                        <ul class = "errors">
+                            {% for error in form.street_number.errors %}
+                            <li class = "alert text-danger">{{ error }}</li>
+                            {% endfor %}
+                        </ul>
+                        {% endif %}
+                    </div>
+                    <div class="form-group col-sm-12 mb-3" style="text-align: center;">
+                        {{ form.zip.label(class = "form-label") }}
+                        <!-- Setting required to false disables the HTML attribute and leaves input validation to the backend -->
+                        {{ form.zip(class = "form-control", id = "zip", required = False, style="text-align:center;") }}
+                        {% if form.zip.errors %}
+                        <ul class = "errors">
+                            {% for error in form.zip.errors %}
+                            <li class = "alert text-danger">{{ error }}</li>
+                            {% endfor %}
+                        </ul>
+                        {% endif %}
+                    </div>
+                    <div class="form-group col-sm-12 mb-3" style="text-align: center;">
+                        {{ form.city.label(class = "form-label") }}
+                        <!-- Setting required to false disables the HTML attribute and leaves input validation to the backend -->
+                        {{ form.city(class = "form-control", id = "city", required = False, style="text-align:center;") }}
+                        {% if form.city.errors %}
+                        <ul class = "errors">
+                            {% for error in form.city.errors %}
+                            <li class = "alert text-danger">{{ error }}</li>
+                            {% endfor %}
+                        </ul>
+                        {% endif %}
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer col-centered">
+                {{ form.submit(class = "btn btn btn-success", form = "modal-form", value = "Update") }}
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<!-- Delete modal -->
+<div class = "modal fade" id="deleteModal">
+    <div class = "modal-dialog">
+        <div class = "modal-content">
+            <div class = "modal-header text-center">
+                <h5 class = "modal-title w-100" id = "deleteModalLabel">Delete Institution</h5>
+                <button type = "button" class = "btn-close" data-bs-dismiss = "modal" aria-label = "Close"></button>
+            </div>
+            <div class = "modal-body" style="text-align: center;">
+                Information regarding the institution will be deleted.<br>
+                All associated projects and researchers will be deleted too.<br>
+                Warning: Deleting projects and researchers will trigger cascading deletions in the database!<br>
+                Are you sure?
+            </div>
+            <div class = "modal-footer col-centered">
+                <button type = "button" class = "btn btn-secondary" data-bs-dismiss = "modal">Close</button>
+                <form id = "delete-modal-form">
+                    <input type = "submit" class = "btn btn-danger" value = "Delete">
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Phone modal -->
+<div class = "modal fade" id="phoneModal">
+    <div class = "modal-dialog">
+        <div class = "modal-content">
+            <div class = "modal-header text-center">
+                <h5 class = "modal-title w-100" id = "phoneModalLabel">Show institution's Phone Numbers</h5>
+                <button type = "button" class = "btn-close" data-bs-dismiss = "modal" aria-label = "Close"></button>
+            </div>
+            <div class = "modal-body" style="text-align: center;">
+                Show me all phone numbers of the institution selected.
+            </div>
+            <div class = "modal-footer col-centered">
+                <button type = "button" class = "btn btn-secondary" data-bs-dismiss = "modal">Close</button>
+                <form id = "phone-modal-form">
+                    <input type = "submit" class = "btn btn-danger" value = "Show">
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+  function setEditModalFields(row) {
+      document.getElementById("id").value = row.getAttribute("data-ins_id");
+      document.getElementById("abbreviation").value = row.getAttribute("data-abbreviation");
+      document.getElementById("name").value = row.getAttribute("data-name");
+      document.getElementById("street_name").value = row.getAttribute("data-street_name");
+      document.getElementById("street_number").value = row.getAttribute("data-street_number");
+      document.getElementById("zip").value = row.getAttribute("data-zip");
+      document.getElementById("city").value = row.getAttribute("data-city");
+      document.getElementById("modal-form").action = "/institutions/update/" + row.getAttribute("data-ins_id");
+      document.getElementById("modal-form").method = "POST";
+      // document.getElementById("submit").addEventListener("click", (e) => {e.preventDefault();});
+      // commented line above would prevent the default behavior of the submit button, that is, sending the
+      // form data with a post request to the determined address and subsequently closing the pop-up
+  }
+
+  function setDeleteModalFields(row) {
+      document.getElementById("delete-modal-form").action = "/institutions/delete/" + row.getAttribute("data-id");
+      document.getElementById("delete-modal-form").method = "POST";
+  }
+
+  function setPhoneModalFields(row) {
+      document.getElementById("phone-modal-form").action = "/phones/" + row.getAttribute("data-id");
+      document.getElementById("phone-modal-form").method = "GET";
+  }
+</script>
+
+{% endblock content %}

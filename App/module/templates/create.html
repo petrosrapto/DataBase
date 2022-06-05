@@ -1,0 +1,631 @@
+{% extends "global_layout.html" %}
+{% block content %}
+<div class="container">
+    {% include "flash_messages.html" %}
+    <div class="row" id="row">
+        <div class="modal-content">
+            <div class="modal-header text-center">
+                <h4 class="modal-title w-100">Create Program</h4>
+            </div>
+            <div class="modal-body col-md-5 col-centered">
+                <form class="form-horizontal" id="program-form" method="POST">
+                    {{ programForm.hidden_tag() }}
+                    <div class="form-group col-sm-12 mb-3" style="text-align: center;">
+                        {{ programForm.name.label(class = "form-label") }}
+                        <!-- Setting required to false disables the HTML attribute and leaves input validation to the backend -->
+                        {{ programForm.name(class = "form-control", placeholder="Enter name", id = "name", required = False, style="text-align:center;") }}
+                        {% if programForm.name.errors %}
+                        <ul class = "errors">
+                            {% for error in programForm.name.errors %}
+                            <li class = "alert text-danger">{{ error }}</li>
+                            {% endfor %}
+                        </ul>
+                        {% endif %}
+                    </div>
+                    <div class="form-group col-sm-12 mb-3" style="text-align: center;">
+                        {{ programForm.department.label(class = "form-label") }}
+                        <!-- Setting required to false disables the HTML attribute and leaves input validation to the backend -->
+                        {{ programForm.department(class = "form-control", placeholder="Enter department", id = "department", required = False, style="text-align:center;") }}
+                        {% if programForm.department.errors %}
+                        <ul class = "errors">
+                            {% for error in programForm.department.errors %}
+                            <li class = "alert text-danger">{{ error }}</li>
+                            {% endfor %}
+                        </ul>
+                        {% endif %}
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer col-centered">
+                {{ programForm.submit(class = "btn btn btn-success", form = "program-form", value = "Create") }}
+            </div>
+        </div>
+    </div>
+    <div class="row" id="row">
+        <div class="modal-content">
+            <div class="modal-header text-center">
+                <h4 class="modal-title w-100">Create Research Field</h4>
+            </div>
+            <div class="modal-body col-md-5 col-centered">
+                <form class="form-horizontal" id="field-form" method="POST">
+                    {{ fieldForm.hidden_tag() }}
+                    <div class="form-group col-sm-12 mb-3" style="text-align: center;">
+                        {{ fieldForm.field_name.label(class = "form-label") }}
+                        <!-- Setting required to false disables the HTML attribute and leaves input validation to the backend -->
+                        {{ fieldForm.field_name(class = "form-control", placeholder="Enter Field's Name", id = "field_name", required = False, style="text-align:center;") }}
+                        {% if fieldForm.field_name.errors %}
+                        <ul class = "errors">
+                            {% for error in fieldForm.field_name.errors %}
+                            <li class = "alert text-danger">{{ error }}</li>
+                            {% endfor %}
+                        </ul>
+                        {% endif %}
+                    </div>
+                    <div class="form-group col-sm-12 mb-3" style="text-align: center;">
+                        {{ fieldForm.description.label(class = "form-label") }}
+                        <!-- Setting required to false disables the HTML attribute and leaves input validation to the backend -->
+                        {{ fieldForm.description(class = "form-control", placeholder="Enter Description", id = "description", required = False, style="text-align:center;") }}
+                        {% if fieldForm.description.errors %}
+                        <ul class = "errors">
+                            {% for error in fieldForm.description.errors %}
+                            <li class = "alert text-danger">{{ error }}</li>
+                            {% endfor %}
+                        </ul>
+                        {% endif %}
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer col-centered">
+                {{ fieldForm.submit(class = "btn btn btn-success", form = "field-form", value = "Create") }}
+            </div>
+        </div>
+    </div>
+    <div class="row" id="row">
+        <div class="modal-content">
+            <div class="modal-header text-center">
+                <h4 class="modal-title w-100">Create Institution</h4>
+            </div>
+            <div class="modal-body col-md-5 col-centered">
+                <form class="form-horizontal" id="institution-form" method="POST">
+                    {{ institutionForm.hidden_tag() }}
+                    <div class="form-group col-sm-12 mb-3" style="text-align: center;">
+                        {{ institutionForm.abbreviation.label(class = "form-label") }}
+                        <!-- Setting required to false disables the HTML attribute and leaves input validation to the backend -->
+                        {{ institutionForm.abbreviation(class = "form-control", placeholder="Enter Abbreviation", id = "abbreviation", required = False, style="text-align:center;") }}
+                        {% if institutionForm.abbreviation.errors %}
+                        <ul class = "errors">
+                            {% for error in institutionForm.abbreviation.errors %}
+                            <li class = "alert text-danger">{{ error }}</li>
+                            {% endfor %}
+                        </ul>
+                        {% endif %}
+                    </div>
+                    <div class="form-group col-sm-12 mb-3" style="text-align: center;">
+                        {{ institutionForm.name.label(class = "form-label") }}
+                        <!-- Setting required to false disables the HTML attribute and leaves input validation to the backend -->
+                        {{ institutionForm.name(class = "form-control", placeholder="Enter Name", id = "name", required = False, style="text-align:center;") }}
+                        {% if institutionForm.name.errors %}
+                        <ul class = "errors">
+                            {% for error in institutionForm.name.errors %}
+                            <li class = "alert text-danger">{{ error }}</li>
+                            {% endfor %}
+                        </ul>
+                        {% endif %}
+                    </div>
+                    <div class="form-group col-sm-12 mb-3" style="text-align: center;">
+                        {{ institutionForm.street_name.label(class = "form-label") }}
+                        <!-- Setting required to false disables the HTML attribute and leaves input validation to the backend -->
+                        {{ institutionForm.street_name(class = "form-control", placeholder="Enter Street Name", id = "street_name", required = False, style="text-align:center;") }}
+                        {% if institutionForm.street_name.errors %}
+                        <ul class = "errors">
+                            {% for error in institutionForm.street_name.errors %}
+                            <li class = "alert text-danger">{{ error }}</li>
+                            {% endfor %}
+                        </ul>
+                        {% endif %}
+                    </div>
+                    <div class="form-group col-sm-12 mb-3" style="text-align: center;">
+                        {{ institutionForm.street_number.label(class = "form-label") }}
+                        <!-- Setting required to false disables the HTML attribute and leaves input validation to the backend -->
+                        {{ institutionForm.street_number(class = "form-control", placeholder="Enter Street Number", id = "street_number", required = False, style="text-align:center;") }}
+                        {% if institutionForm.street_number.errors %}
+                        <ul class = "errors">
+                            {% for error in institutionForm.street_number.errors %}
+                            <li class = "alert text-danger">{{ error }}</li>
+                            {% endfor %}
+                        </ul>
+                        {% endif %}
+                    </div>
+                    <div class="form-group col-sm-12 mb-3" style="text-align: center;">
+                        {{ institutionForm.zip.label(class = "form-label") }}
+                        <!-- Setting required to false disables the HTML attribute and leaves input validation to the backend -->
+                        {{ institutionForm.zip(class = "form-control", placeholder="Enter Zip", id = "zip", required = False, style="text-align:center;") }}
+                        {% if institutionForm.zip.errors %}
+                        <ul class = "errors">
+                            {% for error in institutionForm.zip.errors %}
+                            <li class = "alert text-danger">{{ error }}</li>
+                            {% endfor %}
+                        </ul>
+                        {% endif %}
+                    </div>
+                    <div class="form-group col-sm-12 mb-3" style="text-align: center;">
+                        {{ institutionForm.city.label(class = "form-label") }}
+                        <!-- Setting required to false disables the HTML attribute and leaves input validation to the backend -->
+                        {{ institutionForm.city(class = "form-control", placeholder="Enter City", id = "city", required = False, style="text-align:center;") }}
+                        {% if institutionForm.city.errors %}
+                        <ul class = "errors">
+                            {% for error in institutionForm.city.errors %}
+                            <li class = "alert text-danger">{{ error }}</li>
+                            {% endfor %}
+                        </ul>
+                        {% endif %}
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer col-centered">
+                {{ institutionForm.submit(class = "btn btn btn-success", form = "institution-form", value = "Create") }}
+            </div>
+        </div>
+    </div>
+    <div class="row" id="row">
+        <div class="modal-content">
+            <div class="modal-header text-center">
+                <h4 class="modal-title w-100">Create Researcher</h4>
+            </div>
+            <div class="modal-body col-md-5 col-centered">
+                <form class="form-horizontal" id="researcher-form" method="POST">
+                    {{ researcherForm.hidden_tag() }}
+                    <div class="form-group col-sm-12 mb-3" style="text-align: center;">
+                        {{ researcherForm.first_name.label(class = "form-label") }}
+                        <!-- Setting required to false disables the HTML attribute and leaves input validation to the backend -->
+                        {{ researcherForm.first_name(class = "form-control", placeholder="Enter First Name", id = "first_name", required = False, style="text-align:center;") }}
+                        {% if researcherForm.first_name.errors %}
+                        <ul class = "errors">
+                            {% for error in researcherForm.first_name.errors %}
+                            <li class = "alert text-danger">{{ error }}</li>
+                            {% endfor %}
+                        </ul>
+                        {% endif %}
+                    </div>
+                    <div class="form-group col-sm-12 mb-3" style="text-align: center;">
+                        {{ researcherForm.last_name.label(class = "form-label") }}
+                        <!-- Setting required to false disables the HTML attribute and leaves input validation to the backend -->
+                        {{ researcherForm.last_name(class = "form-control", placeholder="Enter Last Name", id = "last_name", required = False, style="text-align:center;") }}
+                        {% if researcherForm.last_name.errors %}
+                        <ul class = "errors">
+                            {% for error in researcherForm.last_name.errors %}
+                            <li class = "alert text-danger">{{ error }}</li>
+                            {% endfor %}
+                        </ul>
+                        {% endif %}
+                    </div>
+                    <div class="form-group col-sm-12 mb-3" style="text-align: center;">
+                        {{ researcherForm.sex.label(class = "form-label") }}
+                        <!-- Setting required to false disables the HTML attribute and leaves input validation to the backend -->
+                        {{ researcherForm.sex(class = "form-control", placeholder="Select Sex", id = "sex", required = False, style="text-align:center;") }}
+                        {% if researcherForm.sex.errors %}
+                        <ul class = "errors">
+                            {% for error in researcherForm.sex.errors %}
+                            <li class = "alert text-danger">{{ error }}</li>
+                            {% endfor %}
+                        </ul>
+                        {% endif %}
+                    </div>
+                    <div class="form-group col-sm-12 mb-3" style="text-align: center;">
+                        {{ researcherForm.date_of_birth.label(class = "form-label") }}
+                        <!-- Setting required to false disables the HTML attribute and leaves input validation to the backend -->
+                        {{ researcherForm.date_of_birth(class = "form-control", placeholder="Enter Date of Birth", id = "date_of_birth", required = False, style="text-align:center;") }}
+                        {% if researcherForm.date_of_birth.errors %}
+                        <ul class = "errors">
+                            {% for error in researcherForm.date_of_birth.errors %}
+                            <li class = "alert text-danger">{{ error }}</li>
+                            {% endfor %}
+                        </ul>
+                        {% endif %}
+                    </div>
+                    <div class="form-group col-sm-12 mb-3" style="text-align: center;">
+                        {{ researcherForm.ins_id.label(class = "form-label") }}
+                        <!-- Setting required to false disables the HTML attribute and leaves input validation to the backend -->
+                        {{ researcherForm.ins_id(class = "form-control", placeholder="Select Institution's ID", id = "ins_id", required = False, style="text-align:center;") }}
+                        {% if researcherForm.ins_id.errors %}
+                        <ul class = "errors">
+                            {% for error in researcherForm.ins_id.errors %}
+                            <li class = "alert text-danger">{{ error }}</li>
+                            {% endfor %}
+                        </ul>
+                        {% endif %}
+                    </div>
+                    <div class="form-group col-sm-12 mb-3" style="text-align: center;">
+                        {{ researcherForm.res_ins_date.label(class = "form-label") }}
+                        <!-- Setting required to false disables the HTML attribute and leaves input validation to the backend -->
+                        {{ researcherForm.res_ins_date(class = "form-control", placeholder="Select Date", id = "res_ins_date", required = False, style="text-align:center;") }}
+                        {% if researcherForm.res_ins_date.errors %}
+                        <ul class = "errors">
+                            {% for error in researcherForm.res_ins_date.errors %}
+                            <li class = "alert text-danger">{{ error }}</li>
+                            {% endfor %}
+                        </ul>
+                        {% endif %}
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer col-centered">
+                {{ researcherForm.submit(class = "btn btn btn-success", form = "researcher-form", value = "Create") }}
+            </div>
+        </div>
+    </div>
+    <div class="row" id="row">
+        <div class="modal-content">
+            <div class="modal-header text-center">
+                <h4 class="modal-title w-100">Create Project</h4>
+            </div>
+            <div class="modal-body col-md-5 col-centered">
+                <form class="form-horizontal" id="project-form" method="POST">
+                    {{ projectForm.hidden_tag() }}
+                    <div class="form-group col-sm-12 mb-3" style="text-align: center;">
+                        {{ projectForm.projectForm_title.label(class = "form-label") }}
+                        <!-- Setting required to false disables the HTML attribute and leaves input validation to the backend -->
+                        {{ projectForm.projectForm_title(class = "form-control", placeholder="Enter Title", id = "projectForm_title", required = False, style="text-align:center;") }}
+                        {% if projectForm.projectForm_title.errors %}
+                        <ul class = "errors">
+                            {% for error in projectForm.projectForm_title.errors %}
+                            <li class = "alert text-danger">{{ error }}</li>
+                            {% endfor %}
+                        </ul>
+                        {% endif %}
+                    </div>
+                    <div class="form-group col-sm-12 mb-3" style="text-align: center;">
+                        {{ projectForm.projectForm_description.label(class = "form-label") }}
+                        <!-- Setting required to false disables the HTML attribute and leaves input validation to the backend -->
+                        {{ projectForm.projectForm_description(class = "form-control", placeholder="Enter Description", id = "projectForm_description", required = False, style="text-align:center;") }}
+                        {% if projectForm.projectForm_description.errors %}
+                        <ul class = "errors">
+                            {% for error in projectForm.projectForm_description.errors %}
+                            <li class = "alert text-danger">{{ error }}</li>
+                            {% endfor %}
+                        </ul>
+                        {% endif %}
+                    </div>
+                    <div class="form-group col-sm-12 mb-3" style="text-align: center;">
+                        {{ projectForm.start.label(class = "form-label") }}
+                        <!-- Setting required to false disables the HTML attribute and leaves input validation to the backend -->
+                        {{ projectForm.start(class = "form-control", placeholder="Select Date", id = "start", required = False, style="text-align:center;") }}
+                        {% if projectForm.start.errors %}
+                        <ul class = "errors">
+                            {% for error in projectForm.start.errors %}
+                            <li class = "alert text-danger">{{ error }}</li>
+                            {% endfor %}
+                        </ul>
+                        {% endif %}
+                    </div>
+                    <div class="form-group col-sm-12 mb-3" style="text-align: center;">
+                        {{ projectForm.end.label(class = "form-label") }}
+                        <!-- Setting required to false disables the HTML attribute and leaves input validation to the backend -->
+                        {{ projectForm.end(class = "form-control", placeholder="Enter Date", id = "end", required = False, style="text-align:center;") }}
+                        {% if projectForm.end.errors %}
+                        <ul class = "errors">
+                            {% for error in projectForm.end.errors %}
+                            <li class = "alert text-danger">{{ error }}</li>
+                            {% endfor %}
+                        </ul>
+                        {% endif %}
+                    </div>
+                    <div class="form-group col-sm-12 mb-3" style="text-align: center;">
+                        {{ projectForm.fund.label(class = "form-label") }}
+                        <!-- Setting required to false disables the HTML attribute and leaves input validation to the backend -->
+                        {{ projectForm.fund(class = "form-control", placeholder="Select Fund", id = "fund", required = False, style="text-align:center;") }}
+                        {% if projectForm.fund.errors %}
+                        <ul class = "errors">
+                            {% for error in projectForm.fund.errors %}
+                            <li class = "alert text-danger">{{ error }}</li>
+                            {% endfor %}
+                        </ul>
+                        {% endif %}
+                    </div>
+                    <div class="form-group col-sm-12 mb-3" style="text-align: center;">
+                        {{ projectForm.projectForm_ins_id.label(class = "form-label") }}
+                        <!-- Setting required to false disables the HTML attribute and leaves input validation to the backend -->
+                        {{ projectForm.projectForm_ins_id(class = "form-control", placeholder="Select Institution's ID", id = "projectForm_ins_id", required = False, style="text-align:center;") }}
+                        {% if projectForm.projectForm_ins_id.errors %}
+                        <ul class = "errors">
+                            {% for error in projectForm.projectForm_ins_id.errors %}
+                            <li class = "alert text-danger">{{ error }}</li>
+                            {% endfor %}
+                        </ul>
+                        {% endif %}
+                    </div>
+                    <div class="form-group col-sm-12 mb-3" style="text-align: center;">
+                        {{ projectForm.prog_id.label(class = "form-label") }}
+                        <!-- Setting required to false disables the HTML attribute and leaves input validation to the backend -->
+                        {{ projectForm.prog_id(class = "form-control", placeholder="Select Program's ID", id = "prog_id", required = False, style="text-align:center;") }}
+                        {% if projectForm.prog_id.errors %}
+                        <ul class = "errors">
+                            {% for error in projectForm.prog_id.errors %}
+                            <li class = "alert text-danger">{{ error }}</li>
+                            {% endfor %}
+                        </ul>
+                        {% endif %}
+                    </div>
+                    <div class="form-group col-sm-12 mb-3" style="text-align: center;">
+                        {{ projectForm.ex_id.label(class = "form-label") }}
+                        <!-- Setting required to false disables the HTML attribute and leaves input validation to the backend -->
+                        {{ projectForm.ex_id(class = "form-control", placeholder="Select Executive's ID", id = "ex_id", required = False, style="text-align:center;") }}
+                        {% if projectForm.ex_id.errors %}
+                        <ul class = "errors">
+                            {% for error in projectForm.ex_id.errors %}
+                            <li class = "alert text-danger">{{ error }}</li>
+                            {% endfor %}
+                        </ul>
+                        {% endif %}
+                    </div>
+                    <div class="form-group col-sm-12 mb-3" style="text-align: center;">
+                        {{ projectForm.ass_res_id.label(class = "form-label") }}
+                        <!-- Setting required to false disables the HTML attribute and leaves input validation to the backend -->
+                        {{ projectForm.ass_res_id(class = "form-control", placeholder="Select Assessor's ID", id = "ass_res_id", required = False, style="text-align:center;") }}
+                        {% if projectForm.ass_res_id.errors %}
+                        <ul class = "errors">
+                            {% for error in projectForm.ass_res_id.errors %}
+                            <li class = "alert text-danger">{{ error }}</li>
+                            {% endfor %}
+                        </ul>
+                        {% endif %}
+                    </div>
+                    <div class="form-group col-sm-12 mb-3" style="text-align: center;">
+                        {{ projectForm.sup_res_id.label(class = "form-label") }}
+                        <!-- Setting required to false disables the HTML attribute and leaves input validation to the backend -->
+                        {{ projectForm.sup_res_id(class = "form-control", placeholder="Select Supervisor's ID", id = "sup_res_id", required = False, style="text-align:center;") }}
+                        {% if projectForm.sup_res_id.errors %}
+                        <ul class = "errors">
+                            {% for error in projectForm.sup_res_id.errors %}
+                            <li class = "alert text-danger">{{ error }}</li>
+                            {% endfor %}
+                        </ul>
+                        {% endif %}
+                    </div>
+                    <div class="modal-header text-center">
+                        <h4 class="modal-title w-100"></h4>
+                    </div>
+                    <div class="modal-header text-center mb-3">
+                        <h4 class="modal-title w-100">Create Project's Assessment</h4>
+                    </div>
+                    <div class="form-group col-sm-12 mb-3" style="text-align: center;">
+                        {{ projectForm.ass_date.label(class = "form-label") }}
+                        <!-- Setting required to false disables the HTML attribute and leaves input validation to the backend -->
+                        {{ projectForm.ass_date(class = "form-control", placeholder="Enter Date", id = "ass_date", required = False, style="text-align:center;") }}
+                        {% if projectForm.ass_date.errors %}
+                        <ul class = "errors">
+                            {% for error in projectForm.ass_date.errors %}
+                            <li class = "alert text-danger">{{ error }}</li>
+                            {% endfor %}
+                        </ul>
+                        {% endif %}
+                    </div>
+                    <div class="form-group col-sm-12 mb-3" style="text-align: center;">
+                        {{ projectForm.ass_grade.label(class = "form-label") }}
+                        <!-- Setting required to false disables the HTML attribute and leaves input validation to the backend -->
+                        {{ projectForm.ass_grade(class = "form-control", placeholder="Enter Grade", id = "ass_grade", required = False, style="text-align:center;") }}
+                        {% if projectForm.ass_grade.errors %}
+                        <ul class = "errors">
+                            {% for error in projectForm.ass_grade.errors %}
+                            <li class = "alert text-danger">{{ error }}</li>
+                            {% endfor %}
+                        </ul>
+                        {% endif %}
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer col-centered">
+                {{ projectForm.submit(class = "btn btn btn-success", form = "project-form", value = "Create") }}
+            </div>
+        </div>
+    </div>
+    <div class="row" id="row">
+        <div class="modal-content">
+            <div class="modal-header text-center">
+                <h4 class="modal-title w-100">Add Researcher to a Project</h4>
+            </div>
+            <div class="modal-body col-md-5 col-centered">
+                <form class="form-horizontal" id="works-form" method="POST">
+                    {{ worksForm.hidden_tag() }}
+                    <div class="form-group col-sm-12 mb-3" style="text-align: center;">
+                        {{ worksForm.worksForm_res_id.label(class = "form-label") }}
+                        <!-- Setting required to false disables the HTML attribute and leaves input validation to the backend -->
+                        {{ worksForm.worksForm_res_id(class = "form-control", placeholder="Enter Researcher's ID", id = "worksForm_res_id", required = False, style="text-align:center;") }}
+                        {% if worksForm.worksForm_res_id.errors %}
+                        <ul class = "errors">
+                            {% for error in worksForm.worksForm_res_id.errors %}
+                            <li class = "alert text-danger">{{ error }}</li>
+                            {% endfor %}
+                        </ul>
+                        {% endif %}
+                    </div>
+                    <div class="form-group col-sm-12 mb-3" style="text-align: center;">
+                        {{ worksForm.worksForm_proj_id.label(class = "form-label") }}
+                        <!-- Setting required to false disables the HTML attribute and leaves input validation to the backend -->
+                        {{ worksForm.worksForm_proj_id(class = "form-control", placeholder="Enter Project's ID", id = "worksForm_proj_id", required = False, style="text-align:center;") }}
+                        {% if worksForm.worksForm_proj_id.errors %}
+                        <ul class = "errors">
+                            {% for error in worksForm.worksForm_proj_id.errors %}
+                            <li class = "alert text-danger">{{ error }}</li>
+                            {% endfor %}
+                        </ul>
+                        {% endif %}
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer col-centered">
+                {{ worksForm.submit(class = "btn btn btn-success", form = "works-form", value = "Add") }}
+            </div>
+        </div>
+    </div>
+    <div class="row" id="row">
+        <div class="modal-content">
+            <div class="modal-header text-center">
+                <h4 class="modal-title w-100">Add Research Field to a Project</h4>
+            </div>
+            <div class="modal-body col-md-5 col-centered">
+                <form class="form-horizontal" id="proj_fieldForm-form" method="POST">
+                    {{ proj_fieldForm.hidden_tag() }}
+                    <div class="form-group col-sm-12 mb-3" style="text-align: center;">
+                        {{ proj_fieldForm.proj_fieldForm_proj_id.label(class = "form-label") }}
+                        <!-- Setting required to false disables the HTML attribute and leaves input validation to the backend -->
+                        {{ proj_fieldForm.proj_fieldForm_proj_id(class = "form-control", placeholder="Enter Project's ID", id = "proj_fieldForm_proj_id", required = False, style="text-align:center;") }}
+                        {% if proj_fieldForm.proj_fieldForm_proj_id.errors %}
+                        <ul class = "errors">
+                            {% for error in proj_fieldForm.proj_fieldForm_proj_id.errors %}
+                            <li class = "alert text-danger">{{ error }}</li>
+                            {% endfor %}
+                        </ul>
+                        {% endif %}
+                    </div>
+                    <div class="form-group col-sm-12 mb-3" style="text-align: center;">
+                        {{ proj_fieldForm.proj_fieldForm_field_id.label(class = "form-label") }}
+                        <!-- Setting required to false disables the HTML attribute and leaves input validation to the backend -->
+                        {{ proj_fieldForm.proj_fieldForm_field_id(class = "form-control", placeholder="Enter Field's ID", id = "proj_fieldForm_field_id", required = False, style="text-align:center;") }}
+                        {% if proj_fieldForm.proj_fieldForm_field_id.errors %}
+                        <ul class = "errors">
+                            {% for error in proj_fieldForm.proj_fieldForm_field_id.errors %}
+                            <li class = "alert text-danger">{{ error }}</li>
+                            {% endfor %}
+                        </ul>
+                        {% endif %}
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer col-centered">
+                {{ proj_fieldForm.submit(class = "btn btn btn-success", form = "proj_fieldForm-form", value = "Add") }}
+            </div>
+        </div>
+    </div>
+    <div class="row" id="row">
+        <div class="modal-content">
+            <div class="modal-header text-center">
+                <h4 class="modal-title w-100">Add Phone Number to a Institution</h4>
+            </div>
+            <div class="modal-body col-md-5 col-centered">
+                <form class="form-horizontal" id="phoneForm-form" method="POST">
+                    {{ phoneForm.hidden_tag() }}
+                    <div class="form-group col-sm-12 mb-3" style="text-align: center;">
+                        {{ phoneForm.phoneForm_ins_id.label(class = "form-label") }}
+                        <!-- Setting required to false disables the HTML attribute and leaves input validation to the backend -->
+                        {{ phoneForm.phoneForm_ins_id(class = "form-control", placeholder="Enter Institution's ID", id = "phoneForm_ins_id", required = False, style="text-align:center;") }}
+                        {% if phoneForm.phoneForm_ins_id.errors %}
+                        <ul class = "errors">
+                            {% for error in phoneForm.phoneForm_ins_id.errors %}
+                            <li class = "alert text-danger">{{ error }}</li>
+                            {% endfor %}
+                        </ul>
+                        {% endif %}
+                    </div>
+                    <div class="form-group col-sm-12 mb-3" style="text-align: center;">
+                        {{ phoneForm.phoneForm_phone_number.label(class = "form-label") }}
+                        <!-- Setting required to false disables the HTML attribute and leaves input validation to the backend -->
+                        {{ phoneForm.phoneForm_phone_number(class = "form-control", placeholder="Enter Phone Number", id = "phoneForm_phone_number", required = False, style="text-align:center;") }}
+                        {% if phoneForm.phoneForm_phone_number.errors %}
+                        <ul class = "errors">
+                            {% for error in phoneForm.phoneForm_phone_number.errors %}
+                            <li class = "alert text-danger">{{ error }}</li>
+                            {% endfor %}
+                        </ul>
+                        {% endif %}
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer col-centered">
+                {{ phoneForm.submit(class = "btn btn btn-success", form = "phoneForm-form", value = "Add") }}
+            </div>
+        </div>
+    </div>
+    <div class="row" id="row">
+        <div class="modal-content">
+            <div class="modal-header text-center">
+                <h4 class="modal-title w-100">Add Deliverable to a Project</h4>
+            </div>
+            <div class="modal-body col-md-5 col-centered">
+                <form class="form-horizontal" id="deliverableForm-form" method="POST">
+                    {{ deliverableForm.hidden_tag() }}
+                    <div class="form-group col-sm-12 mb-3" style="text-align: center;">
+                        {{ deliverableForm.deliverableForm_proj_id.label(class = "form-label") }}
+                        <!-- Setting required to false disables the HTML attribute and leaves input validation to the backend -->
+                        {{ deliverableForm.deliverableForm_proj_id(class = "form-control", placeholder="Enter Project's ID", id = "deliverableForm_proj_id", required = False, style="text-align:center;") }}
+                        {% if deliverableForm.deliverableForm_proj_id.errors %}
+                        <ul class = "errors">
+                            {% for error in deliverableForm.deliverableForm_proj_id.errors %}
+                            <li class = "alert text-danger">{{ error }}</li>
+                            {% endfor %}
+                        </ul>
+                        {% endif %}
+                    </div>
+                    <div class="form-group col-sm-12 mb-3" style="text-align: center;">
+                        {{ deliverableForm.deliverableForm_title.label(class = "form-label") }}
+                        <!-- Setting required to false disables the HTML attribute and leaves input validation to the backend -->
+                        {{ deliverableForm.deliverableForm_title(class = "form-control", placeholder="Enter Title", id = "deliverableForm_title", required = False, style="text-align:center;") }}
+                        {% if deliverableForm.deliverableForm_title.errors %}
+                        <ul class = "errors">
+                            {% for error in deliverableForm.deliverableForm_title.errors %}
+                            <li class = "alert text-danger">{{ error }}</li>
+                            {% endfor %}
+                        </ul>
+                        {% endif %}
+                    </div>
+                    <div class="form-group col-sm-12 mb-3" style="text-align: center;">
+                        {{ deliverableForm.deliverableForm_description.label(class = "form-label") }}
+                        <!-- Setting required to false disables the HTML attribute and leaves input validation to the backend -->
+                        {{ deliverableForm.deliverableForm_description(class = "form-control", placeholder="Enter Description", id = "deliverableForm_description", required = False, style="text-align:center;") }}
+                        {% if deliverableForm.deliverableForm_description.errors %}
+                        <ul class = "errors">
+                            {% for error in deliverableForm.deliverableForm_description.errors %}
+                            <li class = "alert text-danger">{{ error }}</li>
+                            {% endfor %}
+                        </ul>
+                        {% endif %}
+                    </div>
+                    <div class="form-group col-sm-12 mb-3" style="text-align: center;">
+                        {{ deliverableForm.deliverableForm_date.label(class = "form-label") }}
+                        <!-- Setting required to false disables the HTML attribute and leaves input validation to the backend -->
+                        {{ deliverableForm.deliverableForm_date(class = "form-control", placeholder="Enter Date", id = "deliverableForm_date", required = False, style="text-align:center;") }}
+                        {% if deliverableForm.deliverableForm_date.errors %}
+                        <ul class = "errors">
+                            {% for error in deliverableForm.deliverableForm_date.errors %}
+                            <li class = "alert text-danger">{{ error }}</li>
+                            {% endfor %}
+                        </ul>
+                        {% endif %}
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer col-centered">
+                {{ deliverableForm.submit(class = "btn btn btn-success", form = "deliverableForm-form", value = "Add") }}
+            </div>
+        </div>
+    </div>
+    <div class="row" id="row">
+        <div class="modal-content">
+            <div class="modal-header text-center">
+                <h4 class="modal-title w-100">Create Executive</h4>
+            </div>
+            <div class="modal-body col-md-5 col-centered">
+                <form class="form-horizontal" id="executiveForm-form" method="POST">
+                    {{ executiveForm.hidden_tag() }}
+                    <div class="form-group col-sm-12 mb-3" style="text-align: center;">
+                        {{ executiveForm.executiveForm_name.label(class = "form-label") }}
+                        <!-- Setting required to false disables the HTML attribute and leaves input validation to the backend -->
+                        {{ executiveForm.executiveForm_name(class = "form-control", placeholder="Enter Name", id = "executiveForm_name", required = False, style="text-align:center;") }}
+                        {% if executiveForm.executiveForm_name.errors %}
+                        <ul class = "errors">
+                            {% for error in executiveForm.executiveForm_name.errors %}
+                            <li class = "alert text-danger">{{ error }}</li>
+                            {% endfor %}
+                        </ul>
+                        {% endif %}
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer col-centered">
+                {{ executiveForm.submit(class = "btn btn btn-success", form = "executiveForm-form", value = "Create") }}
+            </div>
+        </div>
+    </div>
+    <div class="row" id="row"></div>
+</div>
+{% endblock content %}

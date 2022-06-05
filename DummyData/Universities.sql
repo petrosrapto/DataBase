@@ -1,0 +1,10 @@
+INSERT INTO university (ins_id, Public_funds) VALUES (78001, 15000000);
+INSERT INTO university (ins_id, Public_funds) VALUES (78002, 40000000);
+INSERT INTO university (ins_id, Public_funds) VALUES (78003, 20000000);
+INSERT INTO university (ins_id, Public_funds) VALUES (78004, 10000000);
+INSERT INTO university (ins_id, Public_funds) VALUES (78005, 13000000);
+INSERT INTO university (ins_id, Public_funds) VALUES (78006, 11000000);
+INSERT INTO university (ins_id, Public_funds) VALUES (78007, 9000000);
+INSERT INTO university (ins_id, Public_funds) VALUES (78008, 2500000);
+INSERT INTO university (ins_id, Public_funds) VALUES (78009, 7000000);
+INSERT INTO university (ins_id, Public_funds) VALUES (78010, 7000000);

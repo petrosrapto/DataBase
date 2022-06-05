@@ -1,0 +1,280 @@
+{% extends "global_layout.html" %}
+{% block content %}
+<div class="container">
+    {% include "flash_messages.html" %}
+    <div class="row" id="row">
+        <div class="col-md-12">
+            <div class="card" id="card-container">
+                <div class="card-body" id="card">
+                    <h4 class="card-title">Assessments</h4>
+                {% if assessments|length == 0 %}
+                    <h1 style="margin-top: 5rem;">No Assessments found!</h1>
+                {% else %}
+                    <div class="table-responsive">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Assessment's ID</th>
+                                    <th>Grade</th>
+                                    <th>Date</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for assessment in assessments %}
+                                    <tr>
+                                        <td> {{ assessment.ass_id }} </td>
+                                        <td> {{ assessment.grade }} </td>
+                                        <td> {{ assessment.date }} </td>
+                                        <td>
+                                            <a type="button" onclick="setEditModalFields(this)"
+                                            data-toggle="modal" data-ass_id="{{ assessment.ass_id }}"
+                                            data-proj_id="{{ projectID }}"
+                                            data-grade="{{ assessment.grade }}"
+                                            data-date="{{ assessment.date }}"
+                                            data-bs-toggle = "modal"
+                                            data-bs-target="#editModal">
+                                                <i class="fa fa-edit"></i>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row" id="row">
+        <div class="col-md-12">
+            <div class="card" id="card-container">
+                <div class="card-body" id="card">
+                    <h4 class="card-title">Deliverables</h4>
+                {% if deliverables|length == 0 %}
+                    <h1 style="margin-top: 5rem;">No Deliverables found!</h1>
+                {% else %}
+                    <div class="table-responsive">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Project's ID</th>
+                                    <th>Title</th>
+                                    <th>Description</th>
+                                    <th>Date</th>
+                                    <th></th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for deliverable in deliverables %}
+                                    <tr>
+                                        <td> {{ deliverable.proj_id }} </td>
+                                        <td> {{ deliverable.title }} </td>
+                                        <td> {{ deliverable.description }} </td>
+                                        <td> {{ deliverable.date }} </td>
+                                        <td>
+                                            <a type="button" onclick="setEditDeliverableModalFields(this)"
+                                            data-toggle="modal" data-proj_id="{{ deliverable.proj_id }}"
+                                            data-ass_id="{{ assessmentID }}"
+                                            data-del_title="{{ deliverable.title }}"
+                                            data-del_description="{{ deliverable.description }}"
+                                            data-del_date="{{ deliverable.date }}"
+                                            data-refer="{{ url_for("updateDeliverable", projectID = projectID, assessmentID = assessmentID, title = deliverable.title, description = deliverable.description) }}"
+                                            data-bs-toggle = "modal"
+                                            data-bs-target="#editDeliverableModal">
+                                                <i class="fa fa-edit"></i>
+                                            </a>
+                                        </td>
+                                        <td>
+                                            <button style = "all: unset; cursor: pointer;" type = "button"
+                                            data-bs-toggle = "modal" data-bs-target = "#deleteModal"
+                                            data-proj_id="{{ deliverable.proj_id }}"
+                                            data-ass_id="{{ assessmentID }}"
+                                            data-del_title="{{ deliverable.title }}"
+                                            data-del_description="{{ deliverable.description }}"
+                                            data-refer_delete="{{ url_for("deleteDeliverable", projectID = projectID, assessmentID = assessmentID, title = deliverable.title, description = deliverable.description) }}" onclick = "setDeleteModalFields(this)">
+                                                <i class = "fa fa-trash"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- Edit modal -->
+<div id="editModal" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header text-center">
+                <h4 class="modal-title w-100">Edit Assessment</h4>
+            </div>
+            <div class="modal-body">
+                <form class="form-horizontal" id="modal-form">
+                    {{ assessmentForm.hidden_tag() }}
+                    <div class="form-group col-sm-3 mb-3 col-centered" style="text-align: center;">
+                        <label for="ass_id" class = "form-label">Assessment's ID</label><br>
+                        <input class = "form-control" type="text" name="ass_id" id="ass_id" readonly style="text-align:center;">
+                    </div>
+                    <div class="form-group col-sm-12 mb-3" style="text-align: center;">
+                        {{ assessmentForm.assessmentForm_date.label(class = "form-label") }}
+                        <!-- Setting required to false disables the HTML attribute and leaves input validation to the backend -->
+                        {{ assessmentForm.assessmentForm_date(class = "form-control", id = "assessmentForm_date", required = False, style="text-align:center;") }}
+                        {% if assessmentForm.assessmentForm_date.errors %}
+                        <ul class = "errors">
+                            {% for error in assessmentForm.assessmentForm_date.errors %}
+                            <li class = "alert text-danger">{{ error }}</li>
+                            {% endfor %}
+                        </ul>
+                        {% endif %}
+                    </div>
+                    <div class="form-group col-sm-12 mb-3" style="text-align: center;">
+                        {{ assessmentForm.assessmentForm_grade.label(class = "form-label") }}
+                        <!-- Setting required to false disables the HTML attribute and leaves input validation to the backend -->
+                        {{ assessmentForm.assessmentForm_grade(class = "form-control", id = "assessmentForm_grade", required = False, style="text-align:center;") }}
+                        {% if assessmentForm.assessmentForm_grade.errors %}
+                        <ul class = "errors">
+                            {% for error in assessmentForm.assessmentForm_grade.errors %}
+                            <li class = "alert text-danger">{{ error }}</li>
+                            {% endfor %}
+                        </ul>
+                        {% endif %}
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer col-centered">
+                {{ assessmentForm.submit(class = "btn btn btn-success", form = "modal-form", value = "Update") }}
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<!-- Edit modal -->
+<div id="editDeliverableModal" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header text-center">
+                <h4 class="modal-title w-100">Edit Deliverable</h4>
+            </div>
+            <div class="modal-body">
+                <form class="form-horizontal" id="modalDeliverable-form">
+                    {{ deliverableForm.hidden_tag() }}
+                    <div class="form-group col-sm-3 mb-3 col-centered" style="text-align: center;">
+                        <label for="proj_id" class = "form-label">Project's ID</label><br>
+                        <input class = "form-control" type="text" name="proj_id" id="proj_id" readonly style="text-align:center;">
+                    </div>
+                    <div class="form-group col-sm-12 mb-3" style="text-align: center;">
+                        {{ deliverableForm.deliverableForm_title.label(class = "form-label") }}
+                        <!-- Setting required to false disables the HTML attribute and leaves input validation to the backend -->
+                        {{ deliverableForm.deliverableForm_title(class = "form-control", id = "deliverableForm_title", required = False, style="text-align:center;") }}
+                        {% if deliverableForm.deliverableForm_title.errors %}
+                        <ul class = "errors">
+                            {% for error in deliverableForm.deliverableForm_title.errors %}
+                            <li class = "alert text-danger">{{ error }}</li>
+                            {% endfor %}
+                        </ul>
+                        {% endif %}
+                    </div>
+                    <div class="form-group col-sm-12 mb-3" style="text-align: center;">
+                        {{ deliverableForm.deliverableForm_description.label(class = "form-label") }}
+                        <!-- Setting required to false disables the HTML attribute and leaves input validation to the backend -->
+                        {{ deliverableForm.deliverableForm_description(class = "form-control", id = "deliverableForm_description", required = False, style="text-align:center;") }}
+                        {% if deliverableForm.deliverableForm_description.errors %}
+                        <ul class = "errors">
+                            {% for error in deliverableForm.deliverableForm_description.errors %}
+                            <li class = "alert text-danger">{{ error }}</li>
+                            {% endfor %}
+                        </ul>
+                        {% endif %}
+                    </div>
+                    <div class="form-group col-sm-12 mb-3" style="text-align: center;">
+                        {{ deliverableForm.deliverableForm_date.label(class = "form-label") }}
+                        <!-- Setting required to false disables the HTML attribute and leaves input validation to the backend -->
+                        {{ deliverableForm.deliverableForm_date(class = "form-control", id = "deliverableForm_date", required = False, style="text-align:center;") }}
+                        {% if deliverableForm.deliverableForm_date.errors %}
+                        <ul class = "errors">
+                            {% for error in deliverableForm.deliverableForm_date.errors %}
+                            <li class = "alert text-danger">{{ error }}</li>
+                            {% endfor %}
+                        </ul>
+                        {% endif %}
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer col-centered">
+                {{ deliverableForm.submit(class = "btn btn btn-success", form = "modalDeliverable-form", value = "Update") }}
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<!-- Delete modal -->
+<div class = "modal fade" id="deleteModal">
+    <div class = "modal-dialog">
+        <div class = "modal-content">
+            <div class = "modal-header text-center">
+                <h5 class = "modal-title w-100" id = "deleteModalLabel">Delete Deliverable</h5>
+                <button type = "button" class = "btn-close" data-bs-dismiss = "modal" aria-label = "Close"></button>
+            </div>
+            <div class = "modal-body" style="text-align: center;">
+                Selected Deliverable will be deleted<br>
+                Are you sure?
+            </div>
+            <div class = "modal-footer col-centered">
+                <button type = "button" class = "btn btn-secondary" data-bs-dismiss = "modal">Close</button>
+                <form id = "delete-modal-form">
+                    <input type = "submit" class = "btn btn-danger" value = "Delete">
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+
+  function setEditModalFields(row) {
+      document.getElementById("ass_id").value = row.getAttribute("data-ass_id");
+      document.getElementById("assessmentForm_date").value = row.getAttribute("data-date");
+      document.getElementById("assessmentForm_grade").value = row.getAttribute("data-grade");
+      document.getElementById("modal-form").action = "/deliverables/assessments/update/" + row.getAttribute("data-proj_id") + "/" + row.getAttribute("data-ass_id");
+      document.getElementById("modal-form").method = "POST";
+      // document.getElementById("submit").addEventListener("click", (e) => {e.preventDefault();});
+      // commented line above would prevent the default behavior of the submit button, that is, sending the
+      // form data with a post request to the determined address and subsequently closing the pop-up
+  }
+
+  function setEditDeliverableModalFields(row) {
+      document.getElementById("proj_id").value = row.getAttribute("data-proj_id");
+      document.getElementById("deliverableForm_title").value = row.getAttribute("data-del_title");
+      document.getElementById("deliverableForm_description").value = row.getAttribute("data-del_description");
+      document.getElementById("deliverableForm_date").value = row.getAttribute("data-del_date");
+      document.getElementById("modalDeliverable-form").action = row.getAttribute("data-refer");
+      document.getElementById("modalDeliverable-form").method = "POST";
+      // document.getElementById("submit").addEventListener("click", (e) => {e.preventDefault();});
+      // commented line above would prevent the default behavior of the submit button, that is, sending the
+      // form data with a post request to the determined address and subsequently closing the pop-up
+  }
+
+  function setDeleteModalFields(row) {
+      document.getElementById("delete-modal-form").action = row.getAttribute("data-refer_delete");
+      document.getElementById("delete-modal-form").method = "POST";
+  }
+</script>
+
+
+{% endblock content %}

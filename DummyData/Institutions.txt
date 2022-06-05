@@ -1,0 +1,32 @@
+7 30
+institution	ins_id	abbreviation	name	street_name	street_number	zip	city
+1	78001	NTUA	National Technical University of Athens end	Patision	682	10682	Athens
+2	78002	NKUA	National and Kapodistrian University of Athens end	Imitou	784	15784	Athens
+3	78003	UOP	University of Patras end	Ippokratous	504	26504	Patras
+4	78004	UTH	University of Thessaly end	Argonafton	221	38221	Volos
+5	78005	UNIWA	University of West Attica end	Spiridonos	243	12243	Athens
+6	78006	TUC	Technical University of Crete end	Akrotiri	100	73100	Chania
+7	78007	DUTH	Democritus University of Thrace end	Campus	100	69100	Komotini
+8	78008	AUTH	Aristotle University of Thessaloniki end	Miller	124	54124	Thessaloniki
+9	78009	AUEB	Athens University of Economics and Business end	Patision	34	10434	Athens
+10	78010	UNIPI	University of Piraeus end	Karaoli	534	18534	Piraeus
+11	78011	NOA	National Oservatory of Athens end	Nimfon	10	11810	Athens
+12	78012	NCSR	National Center for Scientific Research Demokritos end	Neapoleos	341	15341	Athens
+13	78013	GRNET S.A.	National Infrastructures for Research and Technology end	Kifisias	3	11523	Athens
+14	78014	NHRF	National Hellenic Research Foundation end	Konstantinou	635	11635	Athens
+15	78015	CERTH	Centre for Research & Technology Hellas end	Egialias	25	15125	Athens
+16	78016	GAEC	Greek Atomic Energy Commissions end	Neapoleos	41	15341	Athens
+17	78017	HCMR	Hellenic Centre for Marine Research end	Vouliagmenis	452	16452	Athens
+18	78018	FORTH	Foundation for Research and Technology - Hellas end	Plastira	13	70013	Heraklion
+19	78019	CRES	Centre for Renewable Energy Sources and Saving end	Marathonos	9	19009	Athens
+20	78020	BSRC Fleming	Biomedical Sciences Research Center Alexander Fleming end	Fleming	672	16672	Athens
+21	78021	RF	Research Focus end	Emeral	102	8102	Athens
+22	78022	SP	Scipark end	Cambridge	502	86502	Patras
+23	78023	SC	Scolax end	Scheuvront	66	94566	Piraeus
+24	78024	ELY	Experiment.ly end	Hinkle	38	2038	Thessaloniki
+25	78025	IC	Intercomp end	Essex	93	27893	Chania
+26	78026	LL	Linkage Labs end	Hog	466	60466	Athens
+27	78027	LM	LabMouse end	Hedge	701	7701	Athens
+28	78028	OCL	Occulab end	Freshour	205	78205	Tripoli
+29	78029	CL	Config Lab end	Nicholas	427	66427	Lamia
+30	78030	FL	Faculty Labs end	Johnstown	148	60148	Sparta

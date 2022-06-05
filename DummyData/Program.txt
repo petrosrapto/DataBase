@@ -1,0 +1,32 @@
+3 30
+program	prog_id	name	department
+1	23001	Thales	Program Management and Monitoring
+2	23002	Anaximander	Enviromental Research and Sustainable Development
+3	23003	Pythagoras	Design and Scheduling
+4	23004	Anaxagoras	Innovative Actions Planning
+5	23005	Hippocrates	Program Management and Monitoring
+6	23006	Eudoxus	Design and Scheduling
+7	23007	Aristotle	Agriculture and Food Processing
+8	23008	Theophrastus	Enviromental Research and Sustainable Development
+9	23009	Aristarchus	Design and Scheduling
+10	23010	Euclid	Innovative Actions Planning
+11	23011	Archimedes	Program Management and Monitoring
+12	23012	Eratosthenes	Agriculture and Food Processing
+13	23013	Hipparchus	Agriculture and Food Processing
+14	23014	Ptolemy	Design and Scheduling
+15	23015	Diophantus	Enviromental Research and Sustainable Development
+16	23016	Hero	Design and Scheduling
+17	23017	Xenocrates	Enviromental Research and Sustainable Development
+18	23018	Xenagoras	Design and Scheduling
+19	23019	Cleomedes	Innovative Actions Planning
+20	23020	Pytheas	Enviromental Research and Sustainable Development
+21	23021	Theodosius	Innovative Actions Planning
+22	23022	Epicurus	Design and Scheduling
+23	23023	Heraclitus	Design and Scheduling
+24	23024	Plato	Innovative Actions Planning
+25	23025	Eupalinos	Program Management and Monitoring
+26	23026	Leophanes	Agriculture and Food Processing
+27	23027	Pythias	Innovative Actions Planning
+28	23028	Callistatus	Agriculture and Food Processing
+29	23029	Dionysiades	Design and Scheduling
+30	23030	Xenarchus	Design and Scheduling
