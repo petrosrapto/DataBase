@@ -1,7 +1,7 @@
 from flask import Flask, render_template, request, flash, redirect, url_for, abort
 from flask_mysqldb import MySQL
 from module import app, db ## initially created by __init__.py, need to be used here
-from module.forms import ProgramForm, ProjectForm, FieldForm, InstitutionForm, ProjectUpdateForm, ResearcherUpdateForm, ProjectCreateForm
+from module.forms import ProgramForm, ProjectForm, FieldForm, InstitutionForm, ProjectUpdateForm, ResearcherUpdateForm, ProjectCreateForm, WorksForm, Proj_FieldForm
 
 @app.route("/")
 def index():
@@ -109,7 +109,34 @@ def create():
         projectForm.ass_res_id.choices = [list(dict(zip(entry, entry)).items())[0] for entry in cur.fetchall()]
         projectForm.sup_res_id.choices = [(0,"Select supervisor's ID"), *projectForm.ass_res_id.choices]
         projectForm.ass_res_id.choices = [(0,"Select assessor's ID"), *projectForm.ass_res_id.choices]
+        cur.close()
+    except Exception as e: ## OperationalError
+        flash("Error while processing your last request: " + str(e.args[1]), "danger")
 
+    worksForm = WorksForm()
+    try:
+        # find choices
+        cur = db.connection.cursor()
+
+        cur.execute("SELECT res_id FROM researcher ORDER BY res_id;")
+        worksForm.worksForm_res_id.choices = [(0,"Select Researcher's ID"), *[list(dict(zip(entry, entry)).items())[0] for entry in cur.fetchall()]]
+
+        cur.execute("SELECT proj_id FROM project ORDER BY proj_id;")
+        worksForm.worksForm_proj_id.choices = [(0,"Select Project's ID"), *[list(dict(zip(entry, entry)).items())[0] for entry in cur.fetchall()]]
+        cur.close()
+    except Exception as e: ## OperationalError
+        flash("Error while processing your last request: " + str(e.args[1]), "danger")
+
+    proj_fieldForm = Proj_FieldForm()
+    try:
+        # find choices
+        cur = db.connection.cursor()
+
+        cur.execute("SELECT field_id FROM research_field ORDER BY field_id;")
+        proj_fieldForm.proj_fieldForm_field_id.choices = [(0,"Select Field's ID"), *[list(dict(zip(entry, entry)).items())[0] for entry in cur.fetchall()]]
+
+        cur.execute("SELECT proj_id FROM project ORDER BY proj_id;")
+        proj_fieldForm.proj_fieldForm_proj_id.choices = [(0,"Select Project's ID"), *[list(dict(zip(entry, entry)).items())[0] for entry in cur.fetchall()]]
         cur.close()
     except Exception as e: ## OperationalError
         flash("Error while processing your last request: " + str(e.args[1]), "danger")
@@ -197,8 +224,36 @@ def create():
             flash("Error while processing your last request: " + str(e.args[1]), "danger")
             return redirect(url_for("index"))
 
+    if(request.method == "POST" and worksForm.validate_on_submit()):
+        newWorks = worksForm.__dict__
+        query = "INSERT INTO works(res_id, proj_id) VALUES ('{}', '{}');\
+        ".format(newWorks['worksForm_res_id'].data, newWorks['worksForm_proj_id'].data)
+        try:
+            cur = db.connection.cursor()
+            cur.execute(query)
+            db.connection.commit()
+            cur.close()
+            flash("Researcher added to Project successfully", "success")
+            return redirect(url_for("index"))
+        except Exception as e: ## OperationalError
+            flash("Error while processing your last request: " + str(e.args[1]), "danger")
+
+    if(request.method == "POST" and proj_fieldForm.validate_on_submit()):
+        newProj_Field = proj_fieldForm.__dict__
+        query = "INSERT INTO proj_field(proj_id, field_id) VALUES ('{}', '{}');\
+        ".format(newProj_Field['proj_fieldForm_proj_id'].data, newProj_Field['proj_fieldForm_field_id'].data)
+        try:
+            cur = db.connection.cursor()
+            cur.execute(query)
+            db.connection.commit()
+            cur.close()
+            flash("Field added to Project successfully", "success")
+            return redirect(url_for("index"))
+        except Exception as e: ## OperationalError
+            flash("Error while processing your last request: " + str(e.args[1]), "danger")
+
     ## else, response for GET request
-    return render_template("create.html", pageTitle = "Create Page", programForm = programForm, fieldForm = fieldForm, institutionForm = institutionForm, researcherForm = researcherForm, projectForm = projectForm)
+    return render_template("create.html", pageTitle = "Create Page", programForm = programForm, fieldForm = fieldForm, institutionForm = institutionForm, researcherForm = researcherForm, projectForm = projectForm, worksForm = worksForm, proj_fieldForm = proj_fieldForm)
 
 @app.route("/programs/update/<int:programID>", methods = ["POST"])
 def updateProgram(programID):
@@ -455,7 +510,7 @@ def getProjectsFromField(fieldID):
     """
     Show Projects
     """
-    query = f"SELECT DISTINCT p.proj_id, p.title, p.description, p.start, p.end, p.fund, \
+    query = f"SELECT p.proj_id, p.title, p.description, p.start, p.end, p.fund, \
     p.ins_id, p.prog_id, p.ex_id, p.ass_id, p.ass_res_id, p.sup_res_id \
     FROM research_field rf \
     INNER JOIN proj_field pf ON rf.field_id = pf.field_id \

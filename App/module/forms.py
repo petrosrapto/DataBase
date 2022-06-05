@@ -87,3 +87,13 @@ class ProjectCreateForm(FlaskForm):
     ass_date = DateField(label = "Assessment's Date", format='%Y-%m-%d', validators = [DataRequired(message = "Date is a required field.")])
     ass_grade = IntegerField(label = "Assessment's Grade", validators = [DataRequired(message = "Grade is a required field.")])
     submit = SubmitField("Create")
+
+class WorksForm(FlaskForm):
+    worksForm_proj_id = SelectField(label = "Works At Project", coerce=int, validators = [InputRequired(), DataRequired(message = "Project's ID is a required field."), NumberRange(min=1, message="Project's ID is a required field.")])
+    worksForm_res_id = SelectField(label = "Researcher", coerce=int, validators = [InputRequired(), DataRequired(message = "Researcher's ID is a required field."), NumberRange(min=1, message="Researcher's ID is a required field.")])
+    submit = SubmitField("Create")
+
+class Proj_FieldForm(FlaskForm):
+    proj_fieldForm_proj_id = SelectField(label = "Project", coerce=int, validators = [InputRequired(), DataRequired(message = "Project's ID is a required field."), NumberRange(min=1, message="Project's ID is a required field.")])
+    proj_fieldForm_field_id = SelectField(label = "Research Field", coerce=int, validators = [InputRequired(), DataRequired(message = "Field's ID is a required field."), NumberRange(min=1, message="Field's ID is a required field.")])
+    submit = SubmitField("Create")
