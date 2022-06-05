@@ -599,6 +599,33 @@
             </div>
         </div>
     </div>
+    <div class="row" id="row">
+        <div class="modal-content">
+            <div class="modal-header text-center">
+                <h4 class="modal-title w-100">Create Executive</h4>
+            </div>
+            <div class="modal-body col-md-5 col-centered">
+                <form class="form-horizontal" id="executiveForm-form" method="POST">
+                    {{ executiveForm.hidden_tag() }}
+                    <div class="form-group col-sm-12 mb-3" style="text-align: center;">
+                        {{ executiveForm.executiveForm_name.label(class = "form-label") }}
+                        <!-- Setting required to false disables the HTML attribute and leaves input validation to the backend -->
+                        {{ executiveForm.executiveForm_name(class = "form-control", placeholder="Enter Name", id = "executiveForm_name", required = False, style="text-align:center;") }}
+                        {% if executiveForm.executiveForm_name.errors %}
+                        <ul class = "errors">
+                            {% for error in executiveForm.executiveForm_name.errors %}
+                            <li class = "alert text-danger">{{ error }}</li>
+                            {% endfor %}
+                        </ul>
+                        {% endif %}
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer col-centered">
+                {{ executiveForm.submit(class = "btn btn btn-success", form = "executiveForm-form", value = "Create") }}
+            </div>
+        </div>
+    </div>
     <div class="row" id="row"></div>
 </div>
 {% endblock content %}

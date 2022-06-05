@@ -1,7 +1,7 @@
 from flask import Flask, render_template, request, flash, redirect, url_for, abort
 from flask_mysqldb import MySQL
 from module import app, db ## initially created by __init__.py, need to be used here
-from module.forms import ProgramForm, ProjectForm, FieldForm, InstitutionForm, ProjectUpdateForm, ResearcherUpdateForm, ProjectCreateForm, WorksForm, Proj_FieldForm, PhoneForm, PhoneCreateForm, DeliverableForm
+from module.forms import ProgramForm, ProjectForm, FieldForm, InstitutionForm, ProjectUpdateForm, ResearcherUpdateForm, ProjectCreateForm, WorksForm, Proj_FieldForm, PhoneForm, PhoneCreateForm, DeliverableForm, ExecutiveForm, AssessmentForm, DeliverableUpdateForm
 
 @app.route("/")
 def index():
@@ -80,6 +80,7 @@ def create():
     programForm = ProgramForm()
     fieldForm = FieldForm()
     institutionForm = InstitutionForm()
+    executiveForm = ExecutiveForm()
     researcherForm = ResearcherUpdateForm()
     # find choices
     try:
@@ -304,8 +305,22 @@ def create():
         except Exception as e: ## OperationalError
             flash("Error while processing your last request: " + str(e.args[1]), "danger")
 
+    if(request.method == "POST" and executiveForm.validate_on_submit()):
+        newExecutive = executiveForm.__dict__
+        query = "INSERT INTO executive(name) VALUES ('{}');\
+        ".format(newExecutive['executiveForm_name'].data)
+        try:
+            cur = db.connection.cursor()
+            cur.execute(query)
+            db.connection.commit()
+            cur.close()
+            flash("Executive inserted successfully", "success")
+            return redirect(url_for("index"))
+        except Exception as e: ## OperationalError
+            flash("Error while processing your last request: " + str(e.args[1]), "danger")
+
     ## else, response for GET request
-    return render_template("create.html", pageTitle = "Create Page", programForm = programForm, fieldForm = fieldForm, institutionForm = institutionForm, researcherForm = researcherForm, projectForm = projectForm, worksForm = worksForm, proj_fieldForm = proj_fieldForm, phoneForm = phoneForm, deliverableForm = deliverableForm)
+    return render_template("create.html", pageTitle = "Create Page", programForm = programForm, fieldForm = fieldForm, institutionForm = institutionForm, researcherForm = researcherForm, projectForm = projectForm, worksForm = worksForm, proj_fieldForm = proj_fieldForm, phoneForm = phoneForm, deliverableForm = deliverableForm, executiveForm = executiveForm)
 
 @app.route("/programs/update/<int:programID>", methods = ["POST"])
 def updateProgram(programID):
@@ -838,12 +853,30 @@ def updatePhone(institutionID, phoneNumber):
                 flash(error, "danger")
     return redirect(url_for("getPhones", institutionID = institutionID))
 
+@app.route("/phones/delete/<int:institutionID>/<int:phoneNumber>", methods = ["POST"])
+def deletePhone(institutionID, phoneNumber):
+    """
+    Delete a phone number
+    """
+    query = "DELETE FROM ins_phone WHERE ins_id = '{}' AND phone_number = '{}'; \
+    ".format(institutionID, phoneNumber)
+    try:
+        cur = db.connection.cursor()
+        cur.execute(query)
+        db.connection.commit()
+        cur.close()
+        flash("Phone Number deleted successfully", "success")
+    except Exception as e:
+        flash("Error while processing your last request: " + str(e.args[1]), "danger")
+    return redirect(url_for("getPhones", institutionID = institutionID))
+
 @app.route("/deliverables/<int:projectID>/<int:assessmentID>") ## "GET" by default
 def getDeliverables(projectID, assessmentID):
     """
     Show Deliverables
     """
-    #form = PhoneForm()
+    assessmentForm = AssessmentForm()
+    deliverableForm = DeliverableUpdateForm()
     #form.phoneForm_ins_id.choices = [(institutionID, institutionID)]
     query1 = f"SELECT * FROM deliverable d WHERE d.proj_id = {projectID}"
     query2 = f"SELECT * FROM assessment a WHERE a.ass_id = {assessmentID}"
@@ -858,11 +891,78 @@ def getDeliverables(projectID, assessmentID):
         column_names = [i[0] for i in cur.description]
         assessments = [dict(zip(column_names, entry)) for entry in cur.fetchall()]
         cur.close()
-        return render_template("deliverables.html", deliverables = deliverables, assessments = assessments, pageTitle = "Deliverables Page")
+        return render_template("deliverables.html", deliverables = deliverables, assessments = assessments, pageTitle = "Deliverables Page", assessmentForm = assessmentForm, projectID = projectID, assessmentID = assessmentID, deliverableForm = deliverableForm)
     except Exception as e:
         ## if the connection to the database fails, return HTTP response 500
         flash(str(e), "danger")
         abort(500)
+
+@app.route("/deliverables/assessments/update/<int:projectID>/<int:assessmentID>", methods = ["POST"])
+def updateAssessment(projectID, assessmentID):
+    """
+    Update assessments
+    """
+    assessmentForm = AssessmentForm()
+    newAssessment = assessmentForm.__dict__
+    if(assessmentForm.validate_on_submit()):
+        query = "UPDATE assessment SET grade = {}, date = '{}' WHERE ass_id = {}; \
+        ".format(newAssessment['assessmentForm_grade'].data, newAssessment['assessmentForm_date'].data, assessmentID)
+        try:
+            cur = db.connection.cursor()
+            cur.execute(query)
+            db.connection.commit()
+            cur.close()
+            flash("Assessment updated successfully", "success")
+        except Exception as e:
+            flash("Error while processing your last request: " + str(e.args[1]), "danger")
+    else:
+        for category in form.errors.values():
+            for error in category:
+                flash(error, "danger")
+    return redirect(url_for("getDeliverables", projectID = projectID, assessmentID = assessmentID))
+
+@app.route("/deliverables/update/<int:projectID>/<title>/<description>/<int:assessmentID>", methods = ["POST"])
+def updateDeliverable(projectID, title, description, assessmentID):
+    """
+    Update deliverables
+    """
+    deliverableForm = DeliverableUpdateForm()
+    newDeliverable = deliverableForm.__dict__
+    if(deliverableForm.validate_on_submit()):
+        query = "UPDATE deliverable SET proj_id = {}, title = '{}', description = '{}', date = '{}' \
+        WHERE proj_id = '{}' AND title = '{}' AND description = '{}'; \
+        ".format(projectID, newDeliverable['deliverableForm_title'].data, newDeliverable['deliverableForm_description'].data, newDeliverable['deliverableForm_date'].data, projectID, title, description)
+        try:
+            cur = db.connection.cursor()
+            cur.execute(query)
+            db.connection.commit()
+            cur.close()
+            flash("Deliverable updated successfully", "success")
+        except Exception as e:
+            flash("Error while processing your last request: " + str(e.args[1]), "danger")
+    else:
+        for category in form.errors.values():
+            for error in category:
+                flash(error, "danger")
+    return redirect(url_for("getDeliverables", projectID = projectID, assessmentID = assessmentID))
+
+@app.route("/deliverables/delete/<int:projectID>/<title>/<description>/<int:assessmentID>", methods = ["POST"])
+def deleteDeliverable(projectID, title, description, assessmentID):
+    """
+    Delete deliverables
+    """
+    query = "DELETE FROM deliverable WHERE proj_id = '{}' AND title = '{}' AND description = '{}'; \
+    ".format(projectID, title, description)
+    try:
+        cur = db.connection.cursor()
+        cur.execute(query)
+        db.connection.commit()
+        cur.close()
+        flash("Deliverable deleted successfully", "success")
+    except Exception as e:
+        flash("Error while processing your last request: " + str(e.args[1]), "danger")
+
+    return redirect(url_for("getDeliverables", projectID = projectID, assessmentID = assessmentID))
 
 @app.errorhandler(404)
 def page_not_found(e):

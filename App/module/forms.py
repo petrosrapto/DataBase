@@ -109,3 +109,18 @@ class DeliverableForm(FlaskForm):
     deliverableForm_description = StringField(label = "Description", validators = [DataRequired(message = "Description is a required field.")])
     deliverableForm_date = DateField(label = "Date", format='%Y-%m-%d', validators = [DataRequired(message = "Date is a required field.")])
     submit = SubmitField("Create")
+
+class DeliverableUpdateForm(FlaskForm):
+    deliverableForm_title = StringField(label = "Title", validators = [DataRequired(message = "Title is a required field.")])
+    deliverableForm_description = StringField(label = "Description", validators = [DataRequired(message = "Description is a required field.")])
+    deliverableForm_date = DateField(label = "Date", format='%Y-%m-%d', validators = [DataRequired(message = "Date is a required field.")])
+    submit = SubmitField("Create")
+
+class ExecutiveForm(FlaskForm):
+    executiveForm_name = StringField(label = "Name", validators = [DataRequired(message = "Name is a required field.")])
+    submit = SubmitField("Create")
+
+class AssessmentForm(FlaskForm):
+    assessmentForm_date = DateField(label = "Date", format='%Y-%m-%d', validators = [DataRequired(message = "Date is a required field.")])
+    assessmentForm_grade = IntegerField(label = "Grade", validators = [DataRequired(message = "Grade is a required field.")])
+    submit = SubmitField("Create")
