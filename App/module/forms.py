@@ -97,3 +97,13 @@ class Proj_FieldForm(FlaskForm):
     proj_fieldForm_proj_id = SelectField(label = "Project", coerce=int, validators = [InputRequired(), DataRequired(message = "Project's ID is a required field."), NumberRange(min=1, message="Project's ID is a required field.")])
     proj_fieldForm_field_id = SelectField(label = "Research Field", coerce=int, validators = [InputRequired(), DataRequired(message = "Field's ID is a required field."), NumberRange(min=1, message="Field's ID is a required field.")])
     submit = SubmitField("Create")
+
+class PhoneForm(FlaskForm):
+    phoneForm_ins_id = SelectField(label = "Institution", coerce=int, validators = [Optional()])
+    phoneForm_phone_number = IntegerField(label = "Phone Number", validators = [DataRequired(message = "Phone Number is a required field.")])
+    submit = SubmitField("Create")
+
+class PhoneCreateForm(FlaskForm):
+    phoneForm_ins_id = SelectField(label = "Institution", coerce=int, validators = [InputRequired(), Optional()])
+    phoneForm_phone_number = IntegerField(label = "Phone Number", validators = [DataRequired(message = "Phone Number is a required field.")])
+    submit = SubmitField("Create")

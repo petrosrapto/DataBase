@@ -1,7 +1,7 @@
 from flask import Flask, render_template, request, flash, redirect, url_for, abort
 from flask_mysqldb import MySQL
 from module import app, db ## initially created by __init__.py, need to be used here
-from module.forms import ProgramForm, ProjectForm, FieldForm, InstitutionForm, ProjectUpdateForm, ResearcherUpdateForm, ProjectCreateForm, WorksForm, Proj_FieldForm
+from module.forms import ProgramForm, ProjectForm, FieldForm, InstitutionForm, ProjectUpdateForm, ResearcherUpdateForm, ProjectCreateForm, WorksForm, Proj_FieldForm, PhoneForm, PhoneCreateForm
 
 @app.route("/")
 def index():
@@ -141,6 +141,18 @@ def create():
     except Exception as e: ## OperationalError
         flash("Error while processing your last request: " + str(e.args[1]), "danger")
 
+    phoneForm = PhoneCreateForm()
+    try:
+        # find choices
+        cur = db.connection.cursor()
+
+        cur.execute("SELECT ins_id FROM institution ORDER BY ins_id;")
+        phoneForm.phoneForm_ins_id.choices = [(0,"Select Institution's ID"), *[list(dict(zip(entry, entry)).items())[0] for entry in cur.fetchall()]]
+
+        cur.close()
+    except Exception as e: ## OperationalError
+        flash("Error while processing your last request: " + str(e.args[1]), "danger")
+
     ## when the form is submitted
     if(request.method == "POST" and programForm.validate_on_submit()):
         newProgram = programForm.__dict__
@@ -252,8 +264,22 @@ def create():
         except Exception as e: ## OperationalError
             flash("Error while processing your last request: " + str(e.args[1]), "danger")
 
+    if(request.method == "POST" and phoneForm.validate_on_submit()):
+        newPhone = phoneForm.__dict__
+        query = "INSERT INTO ins_phone(ins_id, phone_number) VALUES ('{}', '{}');\
+        ".format(newPhone['phoneForm_ins_id'].data, newPhone['phoneForm_phone_number'].data)
+        try:
+            cur = db.connection.cursor()
+            cur.execute(query)
+            db.connection.commit()
+            cur.close()
+            flash("Phone Number added to Institution successfully", "success")
+            return redirect(url_for("index"))
+        except Exception as e: ## OperationalError
+            flash("Error while processing your last request: " + str(e.args[1]), "danger")
+
     ## else, response for GET request
-    return render_template("create.html", pageTitle = "Create Page", programForm = programForm, fieldForm = fieldForm, institutionForm = institutionForm, researcherForm = researcherForm, projectForm = projectForm, worksForm = worksForm, proj_fieldForm = proj_fieldForm)
+    return render_template("create.html", pageTitle = "Create Page", programForm = programForm, fieldForm = fieldForm, institutionForm = institutionForm, researcherForm = researcherForm, projectForm = projectForm, worksForm = worksForm, proj_fieldForm = proj_fieldForm, phoneForm = phoneForm)
 
 @app.route("/programs/update/<int:programID>", methods = ["POST"])
 def updateProgram(programID):
@@ -723,6 +749,51 @@ def deleteResearcher(researcherID):
     except Exception as e:
         flash("Error while processing your last request: " + str(e.args[1]), "danger")
     return redirect(url_for("getResearchers"))
+
+@app.route("/phones/<int:institutionID>") ## "GET" by default
+def getPhones(institutionID):
+    """
+    Show Phones
+    """
+    form = PhoneForm()
+    form.phoneForm_ins_id.choices = [(institutionID, institutionID)]
+    query = f"SELECT * FROM ins_phone ip WHERE ip.ins_id = {institutionID}"
+    try:
+        cur = db.connection.cursor()
+        cur.execute(query)
+        column_names = [i[0] for i in cur.description]
+        phones = [dict(zip(column_names, entry)) for entry in cur.fetchall()]
+        cur.close()
+        return render_template("phones.html", phones = phones, pageTitle = "Phones Page", form = form)
+    except Exception as e:
+        ## if the connection to the database fails, return HTTP response 500
+        flash(str(e), "danger")
+        abort(500)
+
+@app.route("/phones/update/<int:institutionID>/<int:phoneNumber>", methods = ["POST"])
+def updatePhone(institutionID, phoneNumber):
+    """
+    Update a phone number in the database, by id
+    """
+    form = PhoneForm()
+    form.phoneForm_ins_id.choices = [(institutionID, institutionID)]
+    updateData = form.__dict__
+    if(form.validate_on_submit()):
+        query = "UPDATE ins_phone SET ins_id = {}, phone_number = '{}' WHERE ins_id = {} AND phone_number = {}; \
+        ".format(institutionID, updateData['phoneForm_phone_number'].data, institutionID, phoneNumber)
+        try:
+            cur = db.connection.cursor()
+            cur.execute(query)
+            db.connection.commit()
+            cur.close()
+            flash("Phone Number updated successfully", "success")
+        except Exception as e:
+            flash("Error while processing your last request: " + str(e.args[1]), "danger")
+    else:
+        for category in form.errors.values():
+            for error in category:
+                flash(error, "danger")
+    return redirect(url_for("getPhones", institutionID = institutionID))
 
 @app.errorhandler(404)
 def page_not_found(e):

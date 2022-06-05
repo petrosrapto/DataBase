@@ -78,6 +78,9 @@
                                     {% if "street_name" in institutions[0] %}
                                         <th></th>
                                     {% endif %}
+                                    {% if "street_name" in institutions[0] %}
+                                        <th></th>
+                                    {% endif %}
                                 </tr>
                             </thead>
                             <tbody>
@@ -112,6 +115,15 @@
                                         {% endif %}
                                         {% if "year" in institutions[0] %}
                                             <td> {{ institution.year }} </td>
+                                        {% endif %}
+                                        {% if "street_name" in institutions[0] %}
+                                            <td>
+                                                <button style = "all: unset; cursor: pointer;" type = "button"
+                                                data-bs-toggle = "modal" data-bs-target = "#phoneModal"
+                                                data-id = "{{ institution.ins_id }}" onclick = "setPhoneModalFields(this)">
+                                                    <i class = "fa fa-phone"></i>
+                                                </button>
+                                            </td>
                                         {% endif %}
                                         {% if "street_name" in institutions[0] %}
                                             <td>
@@ -269,6 +281,26 @@
     </div>
 </div>
 
+<!-- Phone modal -->
+<div class = "modal fade" id="phoneModal">
+    <div class = "modal-dialog">
+        <div class = "modal-content">
+            <div class = "modal-header text-center">
+                <h5 class = "modal-title w-100" id = "phoneModalLabel">Show institution's Phone Numbers</h5>
+                <button type = "button" class = "btn-close" data-bs-dismiss = "modal" aria-label = "Close"></button>
+            </div>
+            <div class = "modal-body" style="text-align: center;">
+                Show me all phone numbers of the institution selected.
+            </div>
+            <div class = "modal-footer col-centered">
+                <button type = "button" class = "btn btn-secondary" data-bs-dismiss = "modal">Close</button>
+                <form id = "phone-modal-form">
+                    <input type = "submit" class = "btn btn-danger" value = "Show">
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
 
 <script>
   function setEditModalFields(row) {
@@ -289,6 +321,11 @@
   function setDeleteModalFields(row) {
       document.getElementById("delete-modal-form").action = "/institutions/delete/" + row.getAttribute("data-id");
       document.getElementById("delete-modal-form").method = "POST";
+  }
+
+  function setPhoneModalFields(row) {
+      document.getElementById("phone-modal-form").action = "/phones/" + row.getAttribute("data-id");
+      document.getElementById("phone-modal-form").method = "GET";
   }
 </script>
 

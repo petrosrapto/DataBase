@@ -497,6 +497,45 @@
             </div>
         </div>
     </div>
+    <div class="row" id="row">
+        <div class="modal-content">
+            <div class="modal-header text-center">
+                <h4 class="modal-title w-100">Add Phone Number to a Institution</h4>
+            </div>
+            <div class="modal-body col-md-5 col-centered">
+                <form class="form-horizontal" id="phoneForm-form" method="POST">
+                    {{ phoneForm.hidden_tag() }}
+                    <div class="form-group col-sm-12 mb-3" style="text-align: center;">
+                        {{ phoneForm.phoneForm_ins_id.label(class = "form-label") }}
+                        <!-- Setting required to false disables the HTML attribute and leaves input validation to the backend -->
+                        {{ phoneForm.phoneForm_ins_id(class = "form-control", placeholder="Enter Institution's ID", id = "phoneForm_ins_id", required = False, style="text-align:center;") }}
+                        {% if phoneForm.phoneForm_ins_id.errors %}
+                        <ul class = "errors">
+                            {% for error in phoneForm.phoneForm_ins_id.errors %}
+                            <li class = "alert text-danger">{{ error }}</li>
+                            {% endfor %}
+                        </ul>
+                        {% endif %}
+                    </div>
+                    <div class="form-group col-sm-12 mb-3" style="text-align: center;">
+                        {{ phoneForm.phoneForm_phone_number.label(class = "form-label") }}
+                        <!-- Setting required to false disables the HTML attribute and leaves input validation to the backend -->
+                        {{ phoneForm.phoneForm_phone_number(class = "form-control", placeholder="Enter Phone Number", id = "phoneForm_phone_number", required = False, style="text-align:center;") }}
+                        {% if phoneForm.phoneForm_phone_number.errors %}
+                        <ul class = "errors">
+                            {% for error in phoneForm.phoneForm_phone_number.errors %}
+                            <li class = "alert text-danger">{{ error }}</li>
+                            {% endfor %}
+                        </ul>
+                        {% endif %}
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer col-centered">
+                {{ phoneForm.submit(class = "btn btn btn-success", form = "phoneForm-form", value = "Add") }}
+            </div>
+        </div>
+    </div>
     <div class="row" id="row"></div>
 </div>
 {% endblock content %}
