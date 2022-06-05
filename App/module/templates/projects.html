@@ -88,6 +88,7 @@
                                     <th></th>
                                     <th></th>
                                     <th></th>
+                                    <th></th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -110,6 +111,13 @@
                                             data-bs-toggle = "modal" data-bs-target = "#resModal"
                                             data-id = "{{ project.proj_id }}" onclick = "setModalFieldsRes(this)">
                                                 <i class = "fa fa-eye"></i>
+                                            </button>
+                                        </td>
+                                        <td>
+                                            <button style = "all: unset; cursor: pointer;" type = "button"
+                                            data-bs-toggle = "modal" data-bs-target = "#delsModal"
+                                            data-proj_id = "{{ project.proj_id }}" data-ass_id = "{{ project.ass_id }}" onclick = "setModalFieldsDeliverables(this)">
+                                                <i class = "far fa-file-alt"></i>
                                             </button>
                                         </td>
                                         <td>
@@ -146,20 +154,41 @@
     </div>
 </div>
 
-<!-- Modal -->
+<!-- Researchers Modal -->
 <div class = "modal fade" id="resModal">
     <div class = "modal-dialog">
         <div class = "modal-content">
-            <div class = "modal-header">
-                <h5 class = "modal-title" id = "resModalLabel">View researchers</h5>
+            <div class = "modal-header text-center">
+                <h5 class = "modal-title w-100" id = "resModalLabel">View researchers</h5>
                 <button type = "button" class = "btn-close" data-bs-dismiss = "modal" aria-label = "Close"></button>
             </div>
-            <div class = "modal-body">
+            <div class = "modal-body" style="text-align: center;">
                 Show me the researchers working on the project.
             </div>
-            <div class = "modal-footer">
+            <div class = "modal-footer col-centered">
                 <button type = "button" class = "btn btn-secondary" data-bs-dismiss = "modal">No</button>
                 <form id = "view-modal-form">
+                    <input type = "submit" class = "btn btn-danger" value = "Yes">
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Deliverables Modal -->
+<div class = "modal fade" id="delsModal">
+    <div class = "modal-dialog">
+        <div class = "modal-content">
+            <div class = "modal-header text-center">
+                <h5 class = "modal-title w-100" id = "delsModalLabel">View Deliverables and Assessment</h5>
+                <button type = "button" class = "btn-close" data-bs-dismiss = "modal" aria-label = "Close"></button>
+            </div>
+            <div class = "modal-body" style="text-align: center;">
+                Show me the deliverables and the assessment of the selected project.
+            </div>
+            <div class = "modal-footer col-centered">
+                <button type = "button" class = "btn btn-secondary" data-bs-dismiss = "modal">No</button>
+                <form id = "deliverables-modal-form">
                     <input type = "submit" class = "btn btn-danger" value = "Yes">
                 </form>
             </div>
@@ -355,6 +384,11 @@
     function setModalFieldsRes(row) {
         document.getElementById("view-modal-form").action = "/projects/researchers/" + row.getAttribute("data-id");
         document.getElementById("view-modal-form").method = "GET";
+    }
+
+    function setModalFieldsDeliverables(row) {
+        document.getElementById("deliverables-modal-form").action = "/deliverables/" + row.getAttribute("data-proj_id") + "/" + row.getAttribute("data-ass_id");
+        document.getElementById("deliverables-modal-form").method = "GET";
     }
 
     function setEditModalFields(row) {

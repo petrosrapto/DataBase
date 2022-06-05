@@ -67,11 +67,6 @@ class ProjectUpdateForm(FlaskForm):
     ass_res_id = SelectField(label = "Assessed by Researcher", coerce=int, validators = [InputRequired(), DataRequired(message = "Assessor's ID is a required field."), NumberRange(min=1, message="Assessor's ID is a required field.")])
     sup_res_id = SelectField(label = "Supervised by Researcher", coerce=int, validators = [InputRequired(), DataRequired(message = "Supervisor's ID is a required field."), NumberRange(min=1, message="Supervisor's ID is a required field.")])
     submit = SubmitField("Create")
-    # Deliverable Info
-
-    #del_title = StringField(label = "Title", validators = [DataRequired(message = "Title is a required field.")])
-    #del_description = StringField(label = "Description", validators = [DataRequired(message = "Description is a required field.")])
-    #del_date = DateField(label = "Date", format='%Y-%m-%d', validators = [DataRequired(message = "Date is a required field.")])
 
 class ProjectCreateForm(FlaskForm):
     projectForm_title = StringField(label = "Title", validators = [DataRequired(message = "Title is a required field.")])
@@ -106,4 +101,11 @@ class PhoneForm(FlaskForm):
 class PhoneCreateForm(FlaskForm):
     phoneForm_ins_id = SelectField(label = "Institution", coerce=int, validators = [InputRequired(), Optional()])
     phoneForm_phone_number = IntegerField(label = "Phone Number", validators = [DataRequired(message = "Phone Number is a required field.")])
+    submit = SubmitField("Create")
+
+class DeliverableForm(FlaskForm):
+    deliverableForm_proj_id = SelectField(label = "Project", coerce=int, validators = [InputRequired(), DataRequired(message = "Project's ID is a required field."), NumberRange(min=1, message="Project's ID is a required field.")])
+    deliverableForm_title = StringField(label = "Title", validators = [DataRequired(message = "Title is a required field.")])
+    deliverableForm_description = StringField(label = "Description", validators = [DataRequired(message = "Description is a required field.")])
+    deliverableForm_date = DateField(label = "Date", format='%Y-%m-%d', validators = [DataRequired(message = "Date is a required field.")])
     submit = SubmitField("Create")

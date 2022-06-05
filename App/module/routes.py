@@ -1,7 +1,7 @@
 from flask import Flask, render_template, request, flash, redirect, url_for, abort
 from flask_mysqldb import MySQL
 from module import app, db ## initially created by __init__.py, need to be used here
-from module.forms import ProgramForm, ProjectForm, FieldForm, InstitutionForm, ProjectUpdateForm, ResearcherUpdateForm, ProjectCreateForm, WorksForm, Proj_FieldForm, PhoneForm, PhoneCreateForm
+from module.forms import ProgramForm, ProjectForm, FieldForm, InstitutionForm, ProjectUpdateForm, ResearcherUpdateForm, ProjectCreateForm, WorksForm, Proj_FieldForm, PhoneForm, PhoneCreateForm, DeliverableForm
 
 @app.route("/")
 def index():
@@ -153,6 +153,18 @@ def create():
     except Exception as e: ## OperationalError
         flash("Error while processing your last request: " + str(e.args[1]), "danger")
 
+    deliverableForm = DeliverableForm()
+    try:
+        # find choices
+        cur = db.connection.cursor()
+
+        cur.execute("SELECT proj_id FROM project ORDER BY proj_id;")
+        deliverableForm.deliverableForm_proj_id.choices = [(0,"Select Project's ID"), *[list(dict(zip(entry, entry)).items())[0] for entry in cur.fetchall()]]
+
+        cur.close()
+    except Exception as e: ## OperationalError
+        flash("Error while processing your last request: " + str(e.args[1]), "danger")
+
     ## when the form is submitted
     if(request.method == "POST" and programForm.validate_on_submit()):
         newProgram = programForm.__dict__
@@ -278,8 +290,22 @@ def create():
         except Exception as e: ## OperationalError
             flash("Error while processing your last request: " + str(e.args[1]), "danger")
 
+    if(request.method == "POST" and deliverableForm.validate_on_submit()):
+        newDeliverable = deliverableForm.__dict__
+        query = "INSERT INTO deliverable(proj_id, title, description, date) VALUES ('{}', '{}', '{}', '{}');\
+        ".format(newDeliverable['deliverableForm_proj_id'].data, newDeliverable['deliverableForm_title'].data, newDeliverable['deliverableForm_description'].data, newDeliverable['deliverableForm_date'].data)
+        try:
+            cur = db.connection.cursor()
+            cur.execute(query)
+            db.connection.commit()
+            cur.close()
+            flash("Deliverable added to Project successfully", "success")
+            return redirect(url_for("index"))
+        except Exception as e: ## OperationalError
+            flash("Error while processing your last request: " + str(e.args[1]), "danger")
+
     ## else, response for GET request
-    return render_template("create.html", pageTitle = "Create Page", programForm = programForm, fieldForm = fieldForm, institutionForm = institutionForm, researcherForm = researcherForm, projectForm = projectForm, worksForm = worksForm, proj_fieldForm = proj_fieldForm, phoneForm = phoneForm)
+    return render_template("create.html", pageTitle = "Create Page", programForm = programForm, fieldForm = fieldForm, institutionForm = institutionForm, researcherForm = researcherForm, projectForm = projectForm, worksForm = worksForm, proj_fieldForm = proj_fieldForm, phoneForm = phoneForm, deliverableForm = deliverableForm)
 
 @app.route("/programs/update/<int:programID>", methods = ["POST"])
 def updateProgram(programID):
@@ -811,6 +837,32 @@ def updatePhone(institutionID, phoneNumber):
             for error in category:
                 flash(error, "danger")
     return redirect(url_for("getPhones", institutionID = institutionID))
+
+@app.route("/deliverables/<int:projectID>/<int:assessmentID>") ## "GET" by default
+def getDeliverables(projectID, assessmentID):
+    """
+    Show Deliverables
+    """
+    #form = PhoneForm()
+    #form.phoneForm_ins_id.choices = [(institutionID, institutionID)]
+    query1 = f"SELECT * FROM deliverable d WHERE d.proj_id = {projectID}"
+    query2 = f"SELECT * FROM assessment a WHERE a.ass_id = {assessmentID}"
+    try:
+        cur = db.connection.cursor()
+
+        cur.execute(query1)
+        column_names = [i[0] for i in cur.description]
+        deliverables = [dict(zip(column_names, entry)) for entry in cur.fetchall()]
+
+        cur.execute(query2)
+        column_names = [i[0] for i in cur.description]
+        assessments = [dict(zip(column_names, entry)) for entry in cur.fetchall()]
+        cur.close()
+        return render_template("deliverables.html", deliverables = deliverables, assessments = assessments, pageTitle = "Deliverables Page")
+    except Exception as e:
+        ## if the connection to the database fails, return HTTP response 500
+        flash(str(e), "danger")
+        abort(500)
 
 @app.errorhandler(404)
 def page_not_found(e):

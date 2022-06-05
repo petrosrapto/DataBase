@@ -1,0 +1,75 @@
+{% extends "global_layout.html" %}
+{% block content %}
+<div class="container">
+    {% include "flash_messages.html" %}
+    <div class="row" id="row">
+        <div class="col-md-12">
+            <div class="card" id="card-container">
+                <div class="card-body" id="card">
+                    <h4 class="card-title">Assessments</h4>
+                {% if assessments|length == 0 %}
+                    <h1 style="margin-top: 5rem;">No Assessments found!</h1>
+                {% else %}
+                    <div class="table-responsive">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Assessment's ID</th>
+                                    <th>Grade</th>
+                                    <th>Date</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for assessment in assessments %}
+                                    <tr>
+                                        <td> {{ assessment.ass_id }} </td>
+                                        <td> {{ assessment.grade }} </td>
+                                        <td> {{ assessment.date }} </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row" id="row">
+        <div class="col-md-12">
+            <div class="card" id="card-container">
+                <div class="card-body" id="card">
+                    <h4 class="card-title">Deliverables</h4>
+                {% if deliverables|length == 0 %}
+                    <h1 style="margin-top: 5rem;">No Deliverables found!</h1>
+                {% else %}
+                    <div class="table-responsive">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Project's ID</th>
+                                    <th>Title</th>
+                                    <th>Description</th>
+                                    <th>Date</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for deliverable in deliverables %}
+                                    <tr>
+                                        <td> {{ deliverable.proj_id }} </td>
+                                        <td> {{ deliverable.title }} </td>
+                                        <td> {{ deliverable.description }} </td>
+                                        <td> {{ deliverable.date }} </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock content %}
