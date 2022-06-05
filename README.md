@@ -17,13 +17,13 @@ Semester project for "Data Bases" course at ECE NTUA
 
 # Installation
 
-Βήμα 1: Άνοιγμα του terminal και εκτέλεση της εντολής git init σε ένα άδειο directory
-Βήμα 2: Εκτέλεση της εντολής git clone https://github.com/petrosrapto/DataBase.git
-Βήμα 3: Μετάβαση στο directory Database/App και εκτέλεση της εντολής sudo pip install -r requirements.txt
+1. Άνοιγμα του terminal και εκτέλεση της εντολής git init σε ένα άδειο directory
+2. Εκτέλεση της εντολής git clone https://github.com/petrosrapto/DataBase.git
+3. Μετάβαση στο directory Database/App και εκτέλεση της εντολής sudo pip install -r requirements.txt
         (Θα χρειαστεί να συμπληρωθούν οι κωδικοί του root χρήστη)
-Βήμα 4: Ξεκινήστε τη mySQL και φορτώστε τα αρχεία που θα βρείτε στην παρακάτω παράγραφο(Για τη βάση) χρησιμοποιώντας την εντολή source και βάζοντας το              absolute path του αρχείου
-Βήμα 5: Τρέχουμε τις εντολές cd App/ και python3 run.py 
-Βήμα 6: Ανοίγουμε τον browser και γράφουμε localhost:3001
+4. Ξεκινήστε τη mySQL και φορτώστε τα αρχεία που θα βρείτε στην παρακάτω παράγραφο(Για τη βάση) χρησιμοποιώντας την εντολή source και βάζοντας το              absolute path του αρχείου
+5. Τρέχουμε τις εντολές cd App/ και python3 run.py 
+6. Ανοίγουμε τον browser και γράφουμε localhost:3001
 
 
 
