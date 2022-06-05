@@ -239,7 +239,6 @@ CREATE INDEX idx_sup_res_id ON project(sup_res_id);
 CREATE INDEX idx_start_date ON project(start);
 CREATE INDEX idx_end_date ON project(end);
 CREATE INDEX idx_date_of_birth ON researcher(date_of_birth);
-CREATE INDEX idx_field_name ON research_field(field_name);
 
 /*
   END OF INDEXES
@@ -311,7 +310,13 @@ FLUSH PRIVILEGES;
   START OF TRIGGERS
 */
 
-SET @TRIGGER_DISABLED = 0;
+DROP TABLE IF EXISTS variable;
+CREATE TABLE variable (
+  value INT NOT NULL,
+  PRIMARY KEY (value)
+)ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+INSERT INTO variable(value) values (0);
 
 DELIMITER $$
 DROP TRIGGER IF EXISTS delete_proj_assessment$$
@@ -412,11 +417,11 @@ CREATE TRIGGER proj_works_sup_update
 after update
 ON project FOR EACH ROW
 BEGIN
-SET @TRIGGER_DISABLED = 1;
+update variable set value = 1;
 delete from works where res_id = old.sup_res_id and proj_id = old.proj_id;
 delete from works where res_id = new.sup_res_id and proj_id = old.proj_id;  -- do not create duplicates. Duplicates will mess up the process and not let the update go through.
 insert into works (res_id,proj_id) values (new.sup_res_id,new.proj_id);
-SET @TRIGGER_DISABLED = 0;
+update variable set value = 0;
 END $$
 
 
@@ -442,7 +447,7 @@ CREATE TRIGGER cannot_delete_supervisor
 before delete
 ON works FOR EACH ROW
 BEGIN
-IF @TRIGGER_DISABLED = 0 THEN
+IF ((select value from variable) = 0) THEN
 IF old.res_id = (select sup_res_id from project where proj_id = old.proj_id)  THEN
 SIGNAL SQLSTATE '50008' SET MESSAGE_TEXT = 'Supervisor cannot de deleted.';
 END IF;

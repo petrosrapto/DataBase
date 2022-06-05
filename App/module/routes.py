@@ -485,7 +485,7 @@ def getResearchersFromProject(projectID):
         cur.close()
         return render_template("researchers.html", researchers = researchers, pageTitle = "Researchers Page", updateForm = updateForm)
         """
-        return redirect(url_for('getResearchers', query=query))
+        return redirect(url_for('getResearchers', query=query, fromProject=projectID))
     except Exception as e:
         abort(500)
         print(e)
@@ -689,12 +689,13 @@ def getResearchers():
         else:
             query = "SELECT * FROM projects_per_researcher ORDER BY res_id;"
 
+        fromProject = request.args.get('fromProject')
         cur = db.connection.cursor()
         cur.execute(query)
         column_names = [i[0] for i in cur.description]
         researchers = [dict(zip(column_names, entry)) for entry in cur.fetchall()]
         cur.close()
-        return render_template("researchers.html", researchers = researchers, pageTitle = "Researchers Page", updateForm = updateForm)
+        return render_template("researchers.html", researchers = researchers, pageTitle = "Researchers Page", updateForm = updateForm, fromProject = fromProject)
     except Exception as e:
         ## if the connection to the database fails, return HTTP response 500
         flash(str(e), "danger")
@@ -746,6 +747,22 @@ def deleteResearcher(researcherID):
         db.connection.commit()
         cur.close()
         flash("Researcher deleted successfully", "primary")
+    except Exception as e:
+        flash("Error while processing your last request: " + str(e.args[1]), "danger")
+    return redirect(url_for("getResearchers"))
+
+@app.route("/researchers/works/delete/<int:researcherID>/<int:projectID>", methods = ["POST"])
+def deleteWorks(researcherID, projectID):
+    """
+    Delete researcher from project
+    """
+    query = f"DELETE FROM works WHERE res_id = {researcherID} AND proj_id = {projectID};"
+    try:
+        cur = db.connection.cursor()
+        cur.execute(query)
+        db.connection.commit()
+        cur.close()
+        flash("Researcher deleted from Project successfully", "primary")
     except Exception as e:
         flash("Error while processing your last request: " + str(e.args[1]), "danger")
     return redirect(url_for("getResearchers"))

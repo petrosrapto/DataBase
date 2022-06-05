@@ -59,6 +59,9 @@
                                     {% if "date_of_birth" in researchers[0] %}
                                         <th></th>
                                     {% endif %}
+                                    {% if (("date_of_birth" in researchers[0]) and (fromProject != None)) %}
+                                        <th></th>
+                                    {% endif %}
                                     {% if "date_of_birth" in researchers[0] %}
                                         <th></th>
                                     {% endif %}
@@ -95,6 +98,15 @@
                                                 data-bs-target="#editModal">
                                                     <i class="fa fa-edit"></i>
                                                 </a>
+                                            </td>
+                                        {% endif %}
+                                        {% if (("date_of_birth" in researchers[0]) and (fromProject != None)) %}
+                                            <td>
+                                                <button style = "all: unset; cursor: pointer;" type = "button"
+                                                data-bs-toggle = "modal" data-bs-target = "#deleteWorksModal"
+                                                data-works_res_id = "{{ researcher.res_id }}" data-works_proj_id = "{{ fromProject }}" onclick = "setDeleteWorksModalFields(this)">
+                                                    <i class = "fa fa-cog"></i>
+                                                </button>
                                             </td>
                                         {% endif %}
                                         {% if "date_of_birth" in researchers[0] %}
@@ -238,6 +250,27 @@
     </div>
 </div>
 
+<!-- Delete Works modal -->
+<div class = "modal fade" id="deleteWorksModal">
+    <div class = "modal-dialog">
+        <div class = "modal-content">
+            <div class = "modal-header text-center">
+                <h5 class = "modal-title w-100" id = "deleteWorksModalLabel">Delete Researcher from Project</h5>
+                <button type = "button" class = "btn-close" data-bs-dismiss = "modal" aria-label = "Close"></button>
+            </div>
+            <div class = "modal-body" style="text-align: center;">
+                Delete researcher from selected project.
+            </div>
+            <div class = "modal-footer col-centered">
+                <button type = "button" class = "btn btn-secondary" data-bs-dismiss = "modal">Close</button>
+                <form id = "deleteWorks-modal-form">
+                    <input type = "submit" class = "btn btn-danger" value = "Delete">
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
 <script>
 
     function setEditModalFields(row) {
@@ -258,6 +291,11 @@
     function setDeleteModalFields(row) {
         document.getElementById("delete-modal-form").action = "/researchers/delete/" + row.getAttribute("data-id");
         document.getElementById("delete-modal-form").method = "POST";
+    }
+
+    function setDeleteWorksModalFields(row) {
+        document.getElementById("deleteWorks-modal-form").action = "/researchers/works/delete/" + row.getAttribute("data-works_res_id") + "/" + row.getAttribute("data-works_proj_id");
+        document.getElementById("deleteWorks-modal-form").method = "POST";
     }
 </script>
 {% endblock content %}
